@@ -3,36 +3,54 @@
 <head>  
   <meta charset="UTF-8">
   <title>Sirome TV</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
   <meta name="author" content="Sirome Live Sports">
   <meta name="referrer" content="no-referrer">
-
   <meta property="og:image" content="https://i.postimg.cc/d1hHy4ss/11.png">
 
+  <!-- Preconnect for critical domains -->
+  <link rel="preconnect" href="https://i.postimg.cc">
+  <link rel="preconnect" href="https://raw.githubusercontent.com">
+  <link rel="preconnect" href="https://www.gstatic.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <!-- Preload critical resources -->
+  <link rel="preload" href="https://i.postimg.cc/d1hHy4ss/11.png" as="image">
+  
   <!-- Favicon -->
   <link rel="icon" href="https://i.postimg.cc/d1hHy4ss/11.png" type="image/png">
 
   <!-- New Monetag SDK -->
-  <script src='//libtl.com/sdk.js' data-zone='9978881' data-sdk='show_9978881'></script>
+  <script src='//libtl.com/sdk.js' data-zone='9978881' data-sdk='show_9978881' async></script>
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" defer></script>
 
   <!-- Clappr Core Player and Plugins -->
-  <!-- Clappr Core Player -->
-  <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-  
-  <!-- Clappr Videos Player for Plugins (level-selector) & (hlsjs-playback) -->
-  <script src="https://cdn.jsdelivr.net/npm/level-selector@0.2.0/dist/level-selector.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@clappr/hlsjs-playback@1.0.1/dist/hlsjs-playback.min.js"></script>
-  
-  <!-- PIP Mode Plugin for Clappr -->
-  <script src="https://cdn.jsdelivr.net/npm/clappr-pip-mode@1.1.0/dist/clappr-pip-mode.min.js"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/level-selector@0.2.0/dist/level-selector.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@clappr/hlsjs-playback@1.0.1/dist/hlsjs-playback.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/clappr-pip-mode@1.1.0/dist/clappr-pip-mode.min.js" defer></script>
+
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body, html { height:100%; overflow:hidden; font-family:sans-serif; background:#0f0f0f; color:#fff; }
+    /* CSS Reset with performance optimizations */
+    * { 
+      margin:0; 
+      padding:0; 
+      box-sizing:border-box; 
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    body, html { 
+      height:100%; 
+      overflow:hidden; 
+      font-family:sans-serif; 
+      background:#0f0f0f; 
+      color:#fff; 
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
+    }
     
     /* Disable text selection and image drag */
     * {
@@ -51,6 +69,7 @@
       flex-direction:row;
       height:100vh;
       width:100vw;
+      contain: strict;
     }
 
     /* Player */
@@ -60,6 +79,7 @@
       display:flex;
       flex-direction: column;
       padding: 10px;
+      contain: strict;
     }
     
     .video-wrapper {
@@ -72,6 +92,7 @@
       justify-content:center;
       align-items:center;
       padding: 5px;
+      contain: strict;
     }
    
     #player {
@@ -84,6 +105,10 @@
       box-shadow: none;
       position: relative;
       outline: none;
+      contain: strict;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000;
     }
     
     /* Fullscreen Logo */
@@ -98,16 +123,16 @@
       pointer-events: none;
       display: none;
       transition: opacity 0.3s ease-in-out;
-      animation: logoFadeIn 0.5s ease-out;
-    }
-    
-    @keyframes logoFadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 0.8; transform: translateY(0); }
+      will-change: opacity;
     }
     
     .video-watermark {
-      position:absolute; top:10px; left:10px; width:50px; opacity:.7; z-index:10;
+      position:absolute; 
+      top:10px; 
+      left:10px; 
+      width:50px; 
+      opacity:.7; 
+      z-index:10;
     }
 
     /* Channel box */
@@ -118,43 +143,40 @@
       flex-direction:column;
       height:100%;
       position:relative;
-    }
-
-    @keyframes marquee {
-      from { transform:translateX(0%); }
-      to   { transform:translateX(-100%); }
+      contain: strict;
     }
 
     /* Channel list scroll area */
     .channel-list {
       flex:1;
-      overflow-y:auto;
-      overflow-x:hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       padding: 1rem;
       padding-bottom: 30px;
-      /* Optimize for smooth scrolling */
       -webkit-overflow-scrolling: touch;
-      transform: translateZ(0);
-      backface-visibility: hidden;
+      contain: strict;
+      will-change: transform;
     }
 
     .channel-list::-webkit-scrollbar { 
-      width: 10px; 
+      width: 8px; 
     }
+    
     .channel-list::-webkit-scrollbar-thumb { 
       background: red; 
-      border-radius: 5px; 
+      border-radius: 4px; 
     }
 
     /* Search Box Styles */
     .search-container {
       background: #2a2a2a;
-      border: 1px solid white;
+      border: 1px solid #444;
       border-radius: 3px;
       margin-left:2%;
       margin-right:2%;
       font-size: 10px;
-      padding: None;
+      padding: 0;
+      contain: strict;
     }
 
     .search-box {
@@ -171,7 +193,7 @@
 
     .search-box:focus {
       border-color: white;
-      box-shadow: 0 0 0 2px rgba(2255, 255, 255);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
     }
 
     .search-box::placeholder {
@@ -185,6 +207,7 @@
       color: #aaa;
       background: #2a2a2a;
       border-bottom: 1px solid #444;
+      contain: strict;
     }
 
     .clear-search {
@@ -204,17 +227,22 @@
       color: red;
     }
 
-    /* Channel item styles with focus state for TV remote navigation */
+    /* Channel item styles - PERFORMANCE OPTIMIZED */
+    .playlist-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+      gap: 1rem;
+      min-height: 100%;
+      contain: strict;
+    }
+    
     .channel-item {
       background: #333;
       border-radius: 5px;
       text-align: center;
       padding: 2%;
-      box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
-      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       cursor: pointer;
-      transform: scale(0.98) translateZ(0);
-      animation: fadeInUp 5s ease both;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -223,39 +251,42 @@
       outline: none;
       border: 2px solid transparent;
       user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      /* Hardware acceleration */
-      transform-style: preserve-3d;
-      perspective: 1000px;
-      -webkit-font-smoothing: antialiased;
-      visibility: visible; /* Changed from hidden to visible */
+      contain: strict;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      will-change: transform;
+      transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
+    /* Removed animations that cause blinking */
+    /* transform: scale(0.98); REMOVED */
+    /* animation: fadeInUp 2s ease both; REMOVED */
+
     .channel-item:hover {
-      border: 1px solid white;
-      box-shadow: 0 0 2px white, 0 0 6px white;
-      background: red;
-      transform: translateY(-8px) scale(1.03);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 2px rgba(255, 255, 255, 0.5), 0 0 6px rgba(255, 255, 255, 0.3);
+      background: #444;
+      transform: translateY(-4px) scale(1.02);
     }
 
     /* Focus state for TV remote navigation */
     .channel-item:focus {
       outline: none;
       border: 1px solid white;
-      box-shadow: 0 0 2px white, 0 0 6px white;
-      background: red;
-      transform: scale(1.08);
+      box-shadow: 0 0 2px white, 0 0 6px rgba(255, 255, 255, 0.5);
+      background: #555;
+      transform: scale(1.05);
       z-index: 10;
     }
 
     .channel-item.channel-selected {
       border: 1px solid white;
-      box-shadow: 0 0 2px white, 0 0 6px white;
-      background: black;
-      transform: scale(1.08);
+      box-shadow: 0 0 2px white, 0 0 6px rgba(255, 255, 255, 0.5);
+      background: #222;
+      transform: scale(1.05);
     }
 
-    /* Image loading optimization - IMMEDIATE LOADING */
+    /* Optimized image loading */
     .channel-item img {
       width: 100%;
       height: 70px;
@@ -264,17 +295,25 @@
       pointer-events: none;
       user-select: none;
       -webkit-user-drag: none;
-      /* Add these for better rendering */
-      image-rendering: -webkit-optimize-contrast;
-      image-rendering: crisp-edges;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      background: #222;
+      opacity: 0;
+      transition: opacity 0.3s ease;
       transform: translateZ(0);
-      -webkit-transform: translateZ(0);
-      will-change: transform;
-      /* Remove opacity transition for immediate loading */
-      opacity: 1; /* Changed from 0 to 1 */
-      display: block;
+    }
+
+    .channel-item img.loaded {
+      opacity: 1;
+    }
+
+    .channel-item .image-placeholder {
+      width: 100%;
+      height: 70px;
+      background: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 10px;
     }
 
     .channel-name {
@@ -287,28 +326,7 @@
       text-align: center;
       color: #fff;
       user-select: none;
-    }
-
-    .channel-item small {
-      display: block;
-      font-size: 0.8rem;
-      color: #ccc;
-    }
-
-    @keyframes fadeInUp {
-      0% {
-        transform: translateY(20px);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-    
-    /* Smooth focus transition */
-    .channel-item {
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 2px 0;
     }
     
     .loader {
@@ -339,28 +357,18 @@
     #counters {
       text-align: center;
       background-color: #4f4e4e;
-      border:1px solid white;
+      border:1px solid #666;
       border-radius: 3px;
       margin: 1px 0;
       margin-left:2%;
       margin-right:2%;
       font-size: 10px;
-      padding: None;
+      padding: 5px;
+      contain: strict;
     }
 
     #counters div {
       margin: 1px 0;
-    }
-
-    /* Playlist container and divider */
-    .playlist-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-      gap: 1rem;
-      min-height: 100%;
-      /* Improve rendering */
-      transform: translateZ(0);
-      will-change: transform;
     }
     
     .playlist-divider {
@@ -382,22 +390,25 @@
       background: red !important;
     }
 
-    /* Mobile Styles */
+    /* Mobile Styles - Optimized */
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
         height: 100vh;
         overflow: hidden;
+        contain: strict;
       }
       
       .video-container {
         flex: 0 0 40%;
         padding: 5px;
+        contain: strict;
       }
       
       .channel-box {
         flex: 0 0 60%;
         overflow: hidden;
+        contain: strict;
       }
       
       .playlist-container {
@@ -412,10 +423,8 @@
       
       .channel-item img {
         width: 100%;
-        height: 70px;
+        height: 60px;
         object-fit: contain;
-        /* Reduce image quality for mobile if needed */
-        image-rendering: optimizeSpeed;
       }
       
       .channel-name {
@@ -441,16 +450,12 @@
         transform: scale(0.9);
       }
       
-      /* Reduce animation intensity for mobile */
-      .channel-item:hover {
-        transform: translateY(-4px) scale(1.02);
-      }
-      
       #counters {
         font-size: 8px;
         margin: 2px 0;
         margin-left: 1%;
         margin-right: 1%;
+        padding: 3px;
       }
       
       .search-container {
@@ -465,6 +470,14 @@
       
       .channel-list {
         padding: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* Disable hover effects on mobile */
+      .channel-item:hover {
+        transform: none;
+        border-color: transparent;
+        background: #333;
       }
     }
 
@@ -508,7 +521,7 @@
       
       .channel-item img {
         width: 100%;
-        height: 70px;
+        height: 50px;
       }
     }
   </style>
@@ -521,7 +534,7 @@
     <div class="video-wrapper">
       <div id="player" tabindex="-1"></div>
       <!-- Fullscreen Logo (will be controlled by JavaScript) -->
-      <img id="fullscreen-logo" src="https://i.postimg.cc/d1hHy4ss/11.png" alt="Sirome TV Logo">
+      <img id="fullscreen-logo" src="https://i.postimg.cc/d1hHy4ss/11.png" alt="Sirome TV Logo" loading="lazy">
     </div>
     
     <!-- Firebase Counters -->
@@ -552,58 +565,58 @@
 </div>
 
 <script>
-  // TV Remote Navigation Variables
+  // টিভি রিমোট নেভিগেশন ভেরিয়েবল
   let currentFocusIndex = 0;
   let channelItems = [];
   let isSearchActive = false;
   let lastEnterPressTime = 0;
   let lastKeyPressTime = 0;
   let isInFullscreen = false;
-  let currentMode = 'channels'; // 'channels' or 'player'
+  let currentMode = 'channels';
   let lastNormalModeTime = 0;
   let isDoubleClickMode = false;
   let focusDebounceTimer = null;
+  let imageObserver = null;
   
-  // Image optimization variables
-  let imageCache = new Map();
-  let scrollTimeout;
-  
-  // Disable right-click context menu
-  document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-    return false;
-  });
-
-  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-  document.addEventListener('keydown', function(e) {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-      (e.ctrlKey && e.shiftKey && e.key === 'J') ||
-      (e.ctrlKey && e.key === 'U') ||
-      (e.metaKey && e.altKey && e.key === 'I') ||
-      (e.metaKey && e.altKey && e.key === 'J')
-    ) {
+  // সিঙ্গেলটন ইভেন্ট লিস্টেনার
+  function initEventListeners() {
+    // ডিসেবল রাইট-ক্লিক কনটেক্সট মেনু
+    document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
       return false;
-    }
-  });
+    }, { passive: false });
 
-  // Disable drag and drop for images
-  document.addEventListener('dragstart', function(e) {
-    if (e.target.tagName === 'IMG') {
+    // ডিসেবল F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+    document.addEventListener('keydown', function(e) {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+        (e.ctrlKey && e.key === 'U') ||
+        (e.metaKey && e.altKey && e.key === 'I') ||
+        (e.metaKey && e.altKey && e.key === 'J')
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    }, { passive: false });
+
+    // ডিসেবল ড্র্যাগ এন্ড ড্রপ ফর ইমেজ
+    document.addEventListener('dragstart', function(e) {
+      if (e.target.tagName === 'IMG') {
+        e.preventDefault();
+        return false;
+      }
+    }, { passive: false });
+
+    // ডিসেবল টেক্সট সিলেকশন
+    document.addEventListener('selectstart', function(e) {
       e.preventDefault();
       return false;
-    }
-  });
+    }, { passive: false });
+  }
 
-  // Disable text selection
-  document.addEventListener('selectstart', function(e) {
-    e.preventDefault();
-    return false;
-  });
-
-  // Firebase Configuration
+  // ফায়ারবেস কনফিগারেশন
   const firebaseConfig = {
     apiKey: "AIzaSyBL6nN2TH4uyp8iso6Q99_QHkYyHnslXjU",
     authDomain: "tg-bot-sirome-tv.firebaseapp.com",
@@ -615,11 +628,18 @@
     measurementId: "G-8G48FV41TH"
   };
   
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  window.db = firebase.database();
+  // ফায়ারবেস ইনিশিয়ালাইজ
+  let firebaseInitialized = false;
+  
+  function initializeFirebase() {
+    if (typeof firebase !== 'undefined' && !firebaseInitialized) {
+      firebase.initializeApp(firebaseConfig);
+      window.db = firebase.database();
+      firebaseInitialized = true;
+    }
+  }
 
-  // Playlist URLs
+  // প্লেলিস্ট URLs
   const m3u1Url = 'https://raw.githubusercontent.com/sirometv/playlist/main/sirometv.m3u';
   const m3u2Url = 'https://raw.githubusercontent.com/sirometv/playlist/main/sirometvsports.m3u';
   const m3u3Url = '*/';
@@ -627,58 +647,13 @@
   const m3u5Url = '*/';
   const m3u6Url = '*/';
 
-  // Global variables
+  // গ্লোবাল ভেরিয়েবল
   let player;
   let channels = [];
   let playlistSources = [];
   let filteredChannels = [];
 
-  // ================================
-  // IMAGE PRELOADING FUNCTIONS
-  // ================================
-
-  // Preload images IMMEDIATELY
-  function preloadImages() {
-    if (channels.length === 0) return;
-    
-    console.log('Preloading images...');
-    
-    // Preload first 40 images immediately
-    const initialImages = channels.slice(0, 40).map(ch => ch.logo);
-    const uniqueImages = [...new Set(initialImages)];
-    
-    uniqueImages.forEach(src => {
-      if (!imageCache.has(src)) {
-        const img = new Image();
-        img.src = src;
-        img.onload = () => {
-          imageCache.set(src, img);
-        };
-        // Also add to cache even if fails (will use fallback later)
-        img.onerror = () => {
-          imageCache.set(src, null);
-        };
-      }
-    });
-    
-    // Continue preloading rest of images in background
-    setTimeout(() => {
-      const remainingImages = channels.slice(40).map(ch => ch.logo);
-      const remainingUnique = [...new Set(remainingImages)];
-      
-      remainingUnique.forEach(src => {
-        if (!imageCache.has(src)) {
-          const img = new Image();
-          img.src = src;
-        }
-      });
-    }, 500);
-  }
-
-  // ================================
-  // FULLSCREEN LOGO PLUGIN
-  // ================================
-
+  // ফুলস্ক্রিন লোগো প্লাগিন
   const FullscreenLogoPlugin = Clappr.CorePlugin.extend({
     name: 'fullscreen_logo',
     
@@ -692,16 +667,16 @@
       if (logoElement) {
         if (isFullscreen) {
           logoElement.style.display = 'block';
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             logoElement.style.opacity = '0.8';
-          }, 10);
+          });
         } else {
           logoElement.style.opacity = '0';
           setTimeout(() => {
             logoElement.style.display = 'none';
           }, 300);
           
-          // When exiting fullscreen, stay in current mode
+          // ফুলস্ক্রিন থেকে বের হলে কারেন্ট মোডে থাকুন
           setTimeout(() => {
             if (currentMode === 'channels') {
               focusOnChannels();
@@ -714,90 +689,103 @@
     }
   });
 
-  // ================================
-  // FIREBASE COUNTERS
-  // ================================
-
-  // Firebase Online Counter
-  const usersRef = db.ref("onlineUsers");
-  const totalRef = db.ref("totalVisitors");
-  const todayRef = db.ref("dailyVisitors/" + new Date().toISOString().slice(0, 10));
+  // ফায়ারবেস অনলাইন কাউন্টার
+  let usersRef, totalRef, todayRef;
   const sessionId = "user_" + Math.random().toString(36).substring(2, 12);
   
-  usersRef.child(sessionId).set({
-    lastSeen: Date.now()
-  });
-  
-  totalRef.transaction(c => (c || 0) + 1);
-  todayRef.transaction(c => (c || 0) + 1);
-  
-  window.addEventListener("beforeunload", () => usersRef.child(sessionId).remove());
-  
-  const onlineCounter = document.getElementById("online-counter");
-  const ACTIVE_THRESHOLD = 5 * 1000;
-
-  function updateOnlineCounter() {
-    usersRef.once("value").then(snap => {
-      const onlineUsers = snap.val() || {};
-      const now = Date.now();
-      const activeUsers = Object.values(onlineUsers).filter(u => (now - u.lastSeen) <= ACTIVE_THRESHOLD);
-      const totalOnline = activeUsers.length;
-      totalRef.once("value").then(snap2 => {
-        const totalVisitors = snap2.val() || 0;
-        todayRef.once("value").then(snap3 => {
-          const todayVisitors = snap3.val() || 0;
-          onlineCounter.innerHTML = `👥 Online: ${totalOnline} | 📅 Today: ${todayVisitors} | 🌍 Total: ${totalVisitors}`;
-        });
-      });
+  function initFirebaseCounters() {
+    if (!window.db) return;
+    
+    usersRef = db.ref("onlineUsers");
+    totalRef = db.ref("totalVisitors");
+    todayRef = db.ref("dailyVisitors/" + new Date().toISOString().slice(0, 10));
+    
+    usersRef.child(sessionId).set({
+      lastSeen: Date.now()
     });
-  }
-  
-  updateOnlineCounter();
-  usersRef.on("value", updateOnlineCounter);
-  
-  setInterval(() => usersRef.child(sessionId).update({
-    lastSeen: Date.now()
-  }), 15000);
-
-  // Firebase Ads Counter
-  const adsRef = db.ref("adsStats");
-  const adsCounter = document.getElementById("ads-counter");
-
-  function updateAdsCounter() {
-    adsRef.once("value").then(snap => {
-      const data = snap.val() || {};
-      if (adsCounter) {
-        adsCounter.innerHTML = `▶ Watched: ${data.totalShown || 0} |  ✅ Checked: ${data.totalClicked || 0}`;
+    
+    totalRef.transaction(c => (c || 0) + 1);
+    todayRef.transaction(c => (c || 0) + 1);
+    
+    window.addEventListener("beforeunload", () => {
+      if (usersRef) {
+        usersRef.child(sessionId).remove();
       }
     });
-  }
-  
-  adsRef.on("value", updateAdsCounter);
+    
+    const onlineCounter = document.getElementById("online-counter");
+    const ACTIVE_THRESHOLD = 5 * 1000;
 
-  function incrementAdShown() {
-    adsRef.child("totalShown").transaction(c => (c || 0) + 1);
-  }
-
-  function incrementAdClicked() {
-    adsRef.child("totalClicked").transaction(c => (c || 0) + 1);
-  }
-  
-  // Updated for new Monetag zone
-  if (typeof window.show_9978881_click_callback === 'undefined') {
-    window.show_9978881_click_callback = incrementAdClicked;
-  }
-  
-  let lastAdTime = 0;
-
-  function triggerSwitchAd() {
-    const now = Date.now();
-    const adCooldown = 120000;
-    if (now - lastAdTime < adCooldown) return;
-    lastAdTime = now;
-    if (typeof show_9978881 === 'function') {
-      show_9978881();
-      incrementAdShown();
+    function updateOnlineCounter() {
+      usersRef.once("value").then(snap => {
+        const onlineUsers = snap.val() || {};
+        const now = Date.now();
+        const activeUsers = Object.values(onlineUsers).filter(u => (now - u.lastSeen) <= ACTIVE_THRESHOLD);
+        const totalOnline = activeUsers.length;
+        totalRef.once("value").then(snap2 => {
+          const totalVisitors = snap2.val() || 0;
+          todayRef.once("value").then(snap3 => {
+            const todayVisitors = snap3.val() || 0;
+            if (onlineCounter) {
+              onlineCounter.innerHTML = `👥 Online: ${totalOnline} | 📅 Today: ${todayVisitors} | 🌍 Total: ${totalVisitors}`;
+            }
+          });
+        });
+      });
     }
+    
+    updateOnlineCounter();
+    usersRef.on("value", updateOnlineCounter);
+    
+    setInterval(() => {
+      if (usersRef) {
+        usersRef.child(sessionId).update({
+          lastSeen: Date.now()
+        });
+      }
+    }, 15000);
+  }
+
+  // ইমেজ লোডিং অপটিমাইজেশন
+  function initImageLoading() {
+    // লেইজি লোডিং এর জন্য ইন্টারসেকশন অবজারভার
+    if ('IntersectionObserver' in window) {
+      imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            const src = img.getAttribute('data-src');
+            if (src) {
+              img.src = src;
+              img.removeAttribute('data-src');
+            }
+            
+            img.onload = function() {
+              this.classList.add('loaded');
+            };
+            
+            img.onerror = function() {
+              this.src = 'https://i.postimg.cc/d1hHy4ss/11.png';
+              this.classList.add('loaded');
+            };
+            
+            imageObserver.unobserve(img);
+          }
+        });
+      }, {
+        rootMargin: '50px',
+        threshold: 0.1
+      });
+    }
+  }
+
+  function observeImages() {
+    if (!imageObserver) return;
+    
+    const images = document.querySelectorAll('.channel-item img[data-src]');
+    images.forEach(img => {
+      imageObserver.observe(img);
+    });
   }
 
   // ================================
@@ -809,22 +797,25 @@
     if (channelItems.length > 0) {
       setFocus(currentFocusIndex);
     }
+    
+    // ইমেজ অবজারভ শুরু করুন
+    observeImages();
   }
 
   function setFocus(index) {
-    // Debounce focus changes
+    // ডিবাউন্স ফোকাস চেঞ্জ
     if (focusDebounceTimer) {
       clearTimeout(focusDebounceTimer);
     }
     
     focusDebounceTimer = setTimeout(() => {
-      // Remove focus from all items
+      // সব আইটেম থেকে ফোকাস রিমুভ করুন
       channelItems.forEach(item => {
         item.classList.remove('channel-selected');
         item.setAttribute('tabindex', '-1');
       });
       
-      // Set focus to new index
+      // নতুন ইনডেক্সে ফোকাস সেট করুন
       if (channelItems.length > 0 && index >= 0 && index < channelItems.length) {
         currentFocusIndex = index;
         const selectedItem = channelItems[currentFocusIndex];
@@ -832,19 +823,13 @@
         selectedItem.classList.add('channel-selected');
         selectedItem.setAttribute('tabindex', '0');
         
-        // Smooth scroll into view with requestAnimationFrame
+        // স্মুথ স্ক্রোল ইনটু ভিউ
         requestAnimationFrame(() => {
-          const container = document.querySelector('.channel-list');
-          const itemRect = selectedItem.getBoundingClientRect();
-          const containerRect = container.getBoundingClientRect();
-          
-          if (itemRect.top < containerRect.top || itemRect.bottom > containerRect.bottom) {
-            selectedItem.scrollIntoView({
-              behavior: 'smooth',
-              block: 'nearest',
-              inline: 'nearest'
-            });
-          }
+          selectedItem.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'nearest'
+          });
         });
       }
     }, 50);
@@ -857,7 +842,7 @@
     if (currentFocusIndex >= columns) {
       setFocus(currentFocusIndex - columns);
     } else {
-      // Go to last row if at top
+      // শেষ সারিতে যান যদি উপরে থাকেন
       const rows = Math.ceil(channelItems.length / columns);
       const lastRowStart = (rows - 1) * columns;
       const targetIndex = Math.min(lastRowStart + (currentFocusIndex % columns), channelItems.length - 1);
@@ -872,7 +857,7 @@
     if (currentFocusIndex + columns < channelItems.length) {
       setFocus(currentFocusIndex + columns);
     } else {
-      // Go to first row if at bottom
+      // প্রথম সারিতে যান যদি নীচে থাকেন
       setFocus(currentFocusIndex % columns);
     }
   }
@@ -883,7 +868,7 @@
     if (currentFocusIndex > 0) {
       setFocus(currentFocusIndex - 1);
     } else {
-      // Go to last item
+      // শেষ আইটেমে যান
       setFocus(channelItems.length - 1);
     }
   }
@@ -894,7 +879,7 @@
     if (currentFocusIndex < channelItems.length - 1) {
       setFocus(currentFocusIndex + 1);
     } else {
-      // Go to first item
+      // প্রথম আইটেমে যান
       setFocus(0);
     }
   }
@@ -903,21 +888,21 @@
     const now = Date.now();
     
     if (isInFullscreen) {
-      // In fullscreen mode
+      // ফুলস্ক্রিন মোডে
       if (now - lastEnterPressTime < 1000) {
-        // Double press in fullscreen: Play/Pause
+        // ফুলস্ক্রিনে ডাবল প্রেস: প্লে/পজ
         togglePlayPause();
       } else {
-        // Single press in fullscreen: Exit to normal mode
+        // ফুলস্ক্রিনে সিঙ্গেল প্রেস: নরমাল মোডে ফিরুন
         exitToNormalMode();
       }
     } else {
-      // In normal mode
+      // নরমাল মোডে
       if (now - lastEnterPressTime < 1000) {
-        // Double press in normal mode: Enter fullscreen
+        // নরমাল মোডে ডাবল প্রেস: ফুলস্ক্রিনে যান
         enterFullscreen();
       } else {
-        // Single press in normal mode: Select channel
+        // নরমাল মোডে সিঙ্গেল প্রেস: চ্যানেল সিলেক্ট করুন
         selectChannel();
       }
     }
@@ -946,11 +931,11 @@
 
   function exitToNormalMode() {
     if (isInFullscreen && player && player.core) {
-      // Exit fullscreen
+      // ফুলস্ক্রিন থেকে বের হোন
       player.core.toggleFullscreen();
     }
     
-    // Switch to channels mode after a short delay
+    // ছোট ডিলে পরে চ্যানেল মোডে সুইচ করুন
     setTimeout(() => {
       switchToChannelsMode();
     }, 300);
@@ -973,7 +958,7 @@
       playerElement.focus();
     }
     
-    // Remove focus from channel items
+    // চ্যানেল আইটেম থেকে ফোকাস রিমুভ করুন
     channelItems.forEach(item => {
       item.classList.remove('channel-selected');
       item.setAttribute('tabindex', '-1');
@@ -996,12 +981,12 @@
   function handleNavigationKey(key) {
     const now = Date.now();
     
-    // Update key press time
+    // কী প্রেস টাইম আপডেট করুন
     lastKeyPressTime = now;
     
-    // Handle based on current mode
+    // কারেন্ট মোড অনুযায়ী হ্যান্ডেল করুন
     if (currentMode === 'channels') {
-      // In channels mode, navigate channels
+      // চ্যানেল মোডে, চ্যানেল নেভিগেট করুন
       switch(key) {
         case 'ArrowUp':
           navigateUp();
@@ -1017,7 +1002,7 @@
           break;
       }
     } else if (currentMode === 'player' && !isInFullscreen) {
-      // In player mode (not fullscreen), arrow keys switch to channels mode
+      // প্লেয়ার মোডে (নন-ফুলস্ক্রিন), অ্যারো কী চ্যানেল মোডে সুইচ করে
       switch(key) {
         case 'ArrowUp':
         case 'ArrowDown':
@@ -1057,17 +1042,17 @@
       case 'Escape':
       case 'Backspace':
         if (isInFullscreen) {
-          // Exit fullscreen
+          // ফুলস্ক্রিন থেকে বের হোন
           exitToNormalMode();
         } else if (currentMode === 'player') {
-          // Switch to channels mode
+          // চ্যানেল মোডে সুইচ করুন
           switchToChannelsMode();
         }
-        // In channels mode, do nothing (stay in channels mode)
+        // চ্যানেল মোডে, কিছু করবেন না (চ্যানেল মোডেই থাকুন)
         break;
         
       case 'Tab':
-        // Toggle between player and channels mode
+        // প্লেয়ার এবং চ্যানেল মোডের মধ্যে টগল করুন
         if (currentMode === 'channels') {
           focusOnPlayer();
         } else {
@@ -1088,16 +1073,16 @@
     return Math.max(columns, 3);
   }
 
-  // TV Remote Key Handling
+  // TV রিমোট কী হ্যান্ডলিং
   function handleTVRemoteKey(event) {
     const key = event.key;
     
-    // Prevent default for navigation keys
+    // নেভিগেশন কীগুলির জন্য ডিফল্ট প্রতিরোধ করুন
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' ', 'Escape', 'Tab', 'Backspace'].includes(key)) {
       event.preventDefault();
     }
     
-    // Handle navigation keys
+    // নেভিগেশন কীগুলি হ্যান্ডল করুন
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
       handleNavigationKey(key);
     } else {
@@ -1105,148 +1090,58 @@
     }
   }
 
-  // ================================
-  // CHANNEL RENDERING FUNCTIONS
-  // ================================
-
-  // Setup event listeners efficiently
-  function setupChannelEventListeners() {
-    const channelItems = document.querySelectorAll('.channel-item');
+  // অ্যাপ্লিকেশন ইনিশিয়ালাইজ করুন
+  document.addEventListener('DOMContentLoaded', function() {
+    // ইভেন্ট লিস্টেনার ইনিশিয়ালাইজ করুন
+    initEventListeners();
     
-    channelItems.forEach((item, index) => {
-      // Remove existing listeners to prevent duplicates
-      const newItem = item.cloneNode(true);
-      item.parentNode.replaceChild(newItem, item);
-    });
+    // ফায়ারবেস ইনিশিয়ালাইজ করুন
+    initializeFirebase();
     
-    // Re-select items and add listeners
-    const freshItems = document.querySelectorAll('.channel-item');
-    freshItems.forEach((item, index) => {
-      item.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        currentFocusIndex = index;
-        setFocus(currentFocusIndex);
-        const url = this.getAttribute('data-url');
-        const logo = this.getAttribute('data-logo');
-        playChannel(url, logo);
-        triggerSwitchAd();
-        focusOnPlayer();
-      });
-    });
-  }
-
-  // Optimized renderChannels function - IMMEDIATE IMAGE LOADING
-  function renderChannels() {
-    const channelList = document.getElementById('channelList');
+    // ইমেজ লোডিং ইনিশিয়ালাইজ করুন
+    initImageLoading();
     
-    if (channels.length === 0) {
-      channelList.innerHTML = '<div class="loading">No channels available</div>';
-      channelItems = [];
-      return;
-    }
+    // চ্যানেল লোড করুন
+    loadChannels();
     
-    let html = '<div class="playlist-container">';
+    // সার্চ সেটআপ করুন
+    setupSearch();
     
-    // Create HTML with IMMEDIATE image loading
-    channels.forEach((channel, index) => {
-      // Add divider if needed
-      let divider = '';
-      for (let i = 1; i < playlistSources.length; i++) {
-        if (index === playlistSources[i].startIndex) {
-          divider = `<div class="playlist-divider"></div>`;
-          break;
+    // TV রিমোট কী লিস্টেনার যোগ করুন
+    document.addEventListener('keydown', handleTVRemoteKey);
+    
+    // চ্যানেল মোডে শুরু করুন
+    switchToChannelsMode();
+    
+    // ফোকাস সুইচ করার জন্য ক্লিক হ্যান্ডল করুন
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.channel-item')) {
+        const clickedItem = e.target.closest('.channel-item');
+        const index = Array.from(channelItems).indexOf(clickedItem);
+        if (index >= 0) {
+          currentFocusIndex = index;
+          setFocus(currentFocusIndex);
+          selectChannel();
         }
+      } else if (e.target.closest('#player') || e.target.closest('.video-wrapper')) {
+        focusOnPlayer();
       }
-      
-      const fallbackLogo = 'https://i.postimg.cc/d1hHy4ss/11.png';
-      
-      html += `${divider}
-        <div class="channel-item" 
-             data-url="${channel.url}" 
-             data-logo="${channel.logo}"
-             data-index="${index}"
-             tabindex="-1">
-          <img src="${channel.logo}" 
-               onerror="this.src='${fallbackLogo}';"
-               class="channel-logo"
-               alt="${channel.name}">
-          <div class="channel-name">${channel.name}</div>
-        </div>`;
-    });
+    }, { passive: true });
     
-    html += '</div>';
-    
-    channelList.innerHTML = html;
-    
-    // Preload images immediately
-    setTimeout(preloadImages, 100);
-    
-    // Add click event listeners
+    // লোড করার পরে চ্যানেলে অটো-ফোকাস
     setTimeout(() => {
-      setupChannelEventListeners();
-      updateChannelItems();
+      const channelList = document.getElementById('channelList');
+      if (channelList) {
+        channelList.scrollTop = 0;
+      }
       switchToChannelsMode();
-    }, 100);
-    
-    // Scroll to top after rendering
-    setTimeout(() => {
-      channelList.scrollTop = 0;
-    }, 150);
-  }
+      
+      // ফায়ারবেস কাউন্টার ইনিশিয়ালাইজ করুন
+      initFirebaseCounters();
+    }, 1000);
+  });
 
-  // Render filtered channels with IMMEDIATE image loading
-  function renderFilteredChannels() {
-    const channelList = document.getElementById('channelList');
-    
-    if (filteredChannels.length === 0) {
-      channelList.innerHTML = '<div class="loading">No channels found</div>';
-      channelItems = [];
-      return;
-    }
-    
-    let html = '<div class="playlist-container">';
-    
-    const fallbackLogo = 'https://i.postimg.cc/d1hHy4ss/11.png';
-    
-    filteredChannels.forEach((channel, index) => {
-      html += `
-        <div class="channel-item" 
-             data-url="${channel.url}" 
-             data-logo="${channel.logo}"
-             data-index="${index}"
-             tabindex="-1">
-          <img src="${channel.logo}" 
-               onerror="this.src='${fallbackLogo}';"
-               class="channel-logo"
-               alt="${channel.name}">
-          <div class="channel-name">${channel.name}</div>
-        </div>
-      `;
-    });
-    
-    html += '</div>';
-    
-    channelList.innerHTML = html;
-    
-    // Add click event listeners
-    setTimeout(() => {
-      setupChannelEventListeners();
-      updateChannelItems();
-      switchToChannelsMode();
-    }, 100);
-    
-    // Scroll to top
-    setTimeout(() => {
-      channelList.scrollTop = 0;
-    }, 100);
-  }
-
-  // ================================
-  // SEARCH FUNCTIONALITY
-  // ================================
-
-  // Setup search functionality
+  // সার্চ ফাংশনালিটি সেটআপ করুন
   function setupSearch() {
     const searchInput = document.getElementById('channelSearch');
     const clearButton = document.getElementById('clearSearch');
@@ -1264,7 +1159,7 @@
         clearButton.style.display = 'none';
         clearSearch();
       }
-    });
+    }, { passive: true });
     
     clearButton.addEventListener('click', function() {
       searchInput.value = '';
@@ -1274,22 +1169,22 @@
       switchToChannelsMode();
     });
     
-    // Add keyboard shortcut (Ctrl+F) to focus search
+    // কীবোর্ড শর্টকাট (Ctrl+F) সার্চ ফোকাস করতে
     document.addEventListener('keydown', function(e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
         e.preventDefault();
         searchInput.focus();
       }
       
-      // Focus search with / key
+      // / কী দিয়ে সার্চ ফোকাস করুন
       if (e.key === '/' && document.activeElement !== searchInput) {
         e.preventDefault();
         searchInput.focus();
       }
-    });
+    }, { passive: false });
   }
   
-  // Filter channels based on search term
+  // সার্চ টার্মের ভিত্তিতে চ্যানেল ফিল্টার করুন
   function filterChannels(searchTerm) {
     filteredChannels = channels.filter(channel => 
       channel.name.toLowerCase().includes(searchTerm)
@@ -1307,19 +1202,72 @@
     }
   }
   
-  // Clear search and show all channels
+  // সার্চ ক্লিয়ার করুন এবং সব চ্যানেল দেখান
   function clearSearch() {
     const searchResultsInfo = document.getElementById('searchResultsInfo');
     searchResultsInfo.style.display = 'none';
     renderChannels();
     switchToChannelsMode();
   }
+  
+  // ফিল্টারড চ্যানেল রেন্ডার করুন
+  function renderFilteredChannels() {
+    const channelList = document.getElementById('channelList');
+    
+    if (filteredChannels.length === 0) {
+      channelList.innerHTML = '<div class="loading">No channels found</div>';
+      channelItems = [];
+      return;
+    }
+    
+    let html = '<div class="playlist-container">';
+    
+    filteredChannels.forEach((channel, index) => {
+      html += `
+        <div class="channel-item" 
+             data-url="${channel.url}" 
+             data-logo="${channel.logo}"
+             data-index="${index}"
+             tabindex="-1">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 70'%3E%3Crect width='100' height='70' fill='%23222'/%3E%3C/svg%3E"
+               data-src="${channel.logo}" 
+               onerror="this.src='https://i.postimg.cc/d1hHy4ss/11.png'; this.onerror=null;" 
+               class="channel-logo">
+          <div class="channel-name">${channel.name}</div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    
+    channelList.innerHTML = html;
+    
+    // ফিল্টারড চ্যানেলগুলিতে ক্লিক ইভেন্ট লিস্টেনার যোগ করুন
+    const channelItems = document.querySelectorAll('.channel-item');
+    channelItems.forEach((item, index) => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        currentFocusIndex = index;
+        setFocus(currentFocusIndex);
+        const url = this.getAttribute('data-url');
+        const logo = this.getAttribute('data-logo');
+        playChannel(url, logo);
+        triggerSwitchAd();
+        focusOnPlayer();
+      }, { passive: false });
+    });
+    
+    // নেভিগেশন আইটেম আপডেট করুন
+    updateChannelItems();
+    switchToChannelsMode();
+    
+    setTimeout(() => {
+      channelList.scrollTop = 0;
+    }, 100);
+  }
 
-  // ================================
-  // CHANNEL LOADING
-  // ================================
-
-  // Load channels from multiple playlists
+  // একাধিক প্লেলিস্ট থেকে চ্যানেল লোড করুন
   async function loadChannels() {
     try {
       channels = [];
@@ -1353,7 +1301,6 @@
         }
       }
       
-      // Render channels immediately
       renderChannels();
       
       if (channels.length > 0) {
@@ -1365,7 +1312,7 @@
     }
   }
 
-  // Load M3U playlist
+  // M3U প্লেলিস্ট লোড করুন
   async function loadM3uPlaylist(url) {
     try {
       const response = await fetch(url);
@@ -1428,11 +1375,71 @@
     }
   }
 
-  // ================================
-  // PLAYER FUNCTIONS
-  // ================================
+  // চ্যানেলগুলিকে DOM-এ রেন্ডার করুন (ডিভাইডার সহ)
+  function renderChannels() {
+    const channelList = document.getElementById('channelList');
+    
+    if (channels.length === 0) {
+      channelList.innerHTML = '<div class="loading">No channels available</div>';
+      channelItems = [];
+      return;
+    }
+    
+    let html = '<div class="playlist-container">';
+    
+    channels.forEach((channel, index) => {
+      for (let i = 1; i < playlistSources.length; i++) {
+        if (index === playlistSources[i].startIndex) {
+          html += `<div class="playlist-divider"></div>`;
+          break;
+        }
+      }
+      
+      html += `
+        <div class="channel-item" 
+             data-url="${channel.url}" 
+             data-logo="${channel.logo}"
+             data-index="${index}"
+             tabindex="-1">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 70'%3E%3Crect width='100' height='70' fill='%23222'/%3E%3C/svg%3E"
+               data-src="${channel.logo}" 
+               onerror="this.src='https://i.postimg.cc/d1hHy4ss/11.png'; this.onerror=null;" 
+               class="channel-logo">
+          <div class="channel-name">${channel.name}</div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    
+    channelList.innerHTML = html;
+    
+    // চ্যানেলগুলিতে ক্লিক ইভেন্ট লিস্টেনার যোগ করুন
+    const channelItems = document.querySelectorAll('.channel-item');
+    channelItems.forEach((item, index) => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        currentFocusIndex = index;
+        setFocus(currentFocusIndex);
+        const url = this.getAttribute('data-url');
+        const logo = this.getAttribute('data-logo');
+        playChannel(url, logo);
+        triggerSwitchAd();
+        focusOnPlayer();
+      }, { passive: false });
+    });
+    
+    // নেভিগেশন আইটেম আপডেট করুন
+    updateChannelItems();
+    switchToChannelsMode();
+    
+    setTimeout(() => {
+      channelList.scrollTop = 0;
+    }, 100);
+  }
 
-  // Initialize player
+  // প্লেয়ার ইনিশিয়ালাইজ করুন
   function initPlayer(url, logo) {
     // PIP সমর্থন চেক করুন
     if (!document.pictureInPictureEnabled) {
@@ -1459,10 +1466,10 @@
       poster: "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif"
     });
 
-    // Store player globally
+    // প্লেয়ার গ্লোবালি স্টোর করুন
     window.player = player;
 
-    // Add event listener for when video starts playing
+    // ভিডিও শুরু হলে ইভেন্ট লিস্টেনার যোগ করুন
     player.on('play', function() {
       const posterElement = document.querySelector('.poster');
       if (posterElement) {
@@ -1492,7 +1499,7 @@
     }
   }
 
-  // Play a channel
+  // একটি চ্যানেল প্লে করুন
   function playChannel(url, logo) {
     if (player) {
       player.load(url);
@@ -1505,50 +1512,38 @@
     }
   }
 
-  // ================================
-  // INITIALIZATION
-  // ================================
+  // এড সুইচ ট্রিগার করুন
+  function triggerSwitchAd() {
+    const now = Date.now();
+    const adCooldown = 120000;
+    if (now - lastAdTime < adCooldown) return;
+    lastAdTime = now;
+    if (typeof show_9978881 === 'function') {
+      show_9978881();
+      incrementAdShown();
+    }
+  }
 
-  // Initialize when DOM is loaded
-  document.addEventListener('DOMContentLoaded', function() {
-    // Optimize touch events for mobile
-    document.addEventListener('touchstart', function() {}, { passive: true });
-    document.addEventListener('touchmove', function() {}, { passive: true });
-    
-    // Load channels
-    loadChannels();
-    setupSearch();
-    
-    // Add TV remote key listener
-    document.addEventListener('keydown', handleTVRemoteKey);
-    
-    // Start in channels mode
-    switchToChannelsMode();
-    
-    // Handle clicks to switch focus
-    document.addEventListener('click', function(e) {
-      if (e.target.closest('.channel-item')) {
-        const clickedItem = e.target.closest('.channel-item');
-        const index = Array.from(channelItems).indexOf(clickedItem);
-        if (index >= 0) {
-          currentFocusIndex = index;
-          setFocus(currentFocusIndex);
-          selectChannel();
-        }
-      } else if (e.target.closest('#player') || e.target.closest('.video-wrapper')) {
-        focusOnPlayer();
-      }
-    });
-    
-    // Auto-focus channels after loading
-    setTimeout(() => {
-      const channelList = document.getElementById('channelList');
-      if (channelList) {
-        channelList.scrollTop = 0;
-      }
-      switchToChannelsMode();
-    }, 1000);
-  });
+  let lastAdTime = 0;
+
+  function incrementAdShown() {
+    if (window.db) {
+      const adsRef = db.ref("adsStats");
+      adsRef.child("totalShown").transaction(c => (c || 0) + 1);
+    }
+  }
+
+  function incrementAdClicked() {
+    if (window.db) {
+      const adsRef = db.ref("adsStats");
+      adsRef.child("totalClicked").transaction(c => (c || 0) + 1);
+    }
+  }
+  
+  // নতুন Monetag জোনের জন্য আপডেট করা
+  if (typeof window.show_9978881_click_callback === 'undefined') {
+    window.show_9978881_click_callback = incrementAdClicked;
+  }
 </script>
 
 </body>
