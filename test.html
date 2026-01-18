@@ -188,9 +188,13 @@
       background: #333;
       border-radius: 5px;
       text-align: center;
-      padding: 2%;
       box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
+      /* এখানে Box Shadow ছিলো 12px*/
+      transition: all 0.2s ease;
       cursor: pointer;
+      transform: scale(0.98);
+      animation: fadeInUp 5s ease both;
+      /* animation: fadeInUp ছিলো 0.6s কিন্তু আমি ৫ সেকেন্ড দিয়েছি যাতে প্লেলিস্ট স্লো মোশনে লোড হয় */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -200,6 +204,12 @@
       border: 2px solid transparent;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+    }
+    
+    .channel-item:hover {
+      border: 1px solid white;
+      box-shadow: 0 0 2px white, 0 0 3px white;
+      background: red;
     }
 
     /* Focus state for TV remote navigation */
