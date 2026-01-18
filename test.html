@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>  
@@ -99,13 +98,6 @@
       opacity: 0;
       pointer-events: none;
       display: none;
-      transition: opacity 0.3s ease-in-out;
-      animation: logoFadeIn 0.5s ease-out;
-    }
-    
-    @keyframes logoFadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 0.8; transform: translateY(0); }
     }
     
     .video-watermark {
@@ -120,11 +112,6 @@
       flex-direction:column;
       height:100%;
       position:relative;
-    }
-
-    @keyframes marquee {
-      from { transform:translateX(0%); }
-      to   { transform:translateX(-100%); }
     }
 
     /* Channel list scroll area */
@@ -164,12 +151,10 @@
       color: white;
       font-size: 10px;
       outline: none;
-      transition: all 0.3s ease;
     }
 
     .search-box:focus {
       border-color: white;
-      box-shadow: 0 0 0 2px rgba(2255, 255, 255);
     }
 
     .search-box::placeholder {
@@ -198,23 +183,14 @@
       padding: 5px;
     }
 
-    .clear-search:hover {
-      color: red;
-    }
-
     /* Channel item styles with focus state for TV remote navigation */
     .channel-item {
       background: #333;
       border-radius: 5px;
       text-align: center;
       padding: 2%;
-      box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
-      /* এখানে Box Shadow ছিলো 12px*/
-      transition: all 0.2s ease;
+      box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
       cursor: pointer;
-      transform: scale(0.01);
-      animation: fadeInUp 0.1s ease both;
-      /* animation: fadeInUp ছিলো 0.6s কিন্তু আমি ৫ সেকেন্ড দিয়েছি যাতে প্লেলিস্ট স্লো মোশনে লোড হয় */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -226,28 +202,15 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .channel-item:hover {
-      border: 1px solid white;
-      box-shadow: 0 0 2px white, 0 0 6px white;
-      background: red;
-      transform: translateY(-8px) scale(1.03);
-    }
-
     /* Focus state for TV remote navigation */
     .channel-item:focus {
       outline: none;
-      border: 1px solid white;
-      box-shadow: 0 0 2px white, 0 0 6px white;
-      background: red;
-      transform: scale(0.01);
-      z-index: 10;
     }
 
     .channel-item.channel-selected {
       border: 1px solid white;
       box-shadow: 0 0 2px white, 0 0 6px white;
       background: black;
-      transform: scale(0.01);
     }
 
     .channel-item img {
@@ -276,22 +239,6 @@
       display: block;
       font-size: 0.8rem;
       color: #ccc;
-    }
-
-    @keyframes fadeInUp {
-      0% {
-        transform: translateY(20px);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-    
-    /* Smooth focus transition */
-    .channel-item {
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .loader {
@@ -358,10 +305,6 @@
       border-radius: 4px !important;
     }
 
-    .pip-button:hover {
-      background: red !important;
-    }
-
     /* Mobile Styles */
     @media (max-width: 768px) {
       .main-container {
@@ -416,7 +359,7 @@
       }
       
       .pip-button {
-        transform: scale(0.01);
+        transform: scale(0.9);
       }
       
       #counters {
