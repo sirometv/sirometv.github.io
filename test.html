@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>  
@@ -31,482 +32,412 @@
   <script src="https://cdn.jsdelivr.net/npm/clappr-pip-mode@1.1.0/dist/clappr-pip-mode.min.js"></script>
   
   <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body, html { height:100%; overflow:hidden; font-family:sans-serif; background:#0f0f0f; color:#fff; }
+    
+    /* Disable text selection and image drag */
+    * {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      -khtml-user-drag: none;
+      -moz-user-drag: none;
+      -o-user-drag: none;
+    }
 
-      body,
-      html {
-        height: 100%;
-        overflow: hidden;
-        font-family: sans-serif;
-        background: #0f0f0f;
-        color: #fff;
-      }
+    .main-container {
+      display:flex;
+      flex-direction:row;
+      height:100vh;
+      width:100vw;
+    }
 
-      /* Disable text selection and image drag */
-      * {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        -webkit-user-drag: none;
-        -khtml-user-drag: none;
-        -moz-user-drag: none;
-        -o-user-drag: none;
-      }
+    /* Player */
+    .video-container {
+      flex:0 0 70%;
+      background: black;
+      display:flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+    
+    .video-wrapper {
+      width:100%;
+      flex:1;
+      position:relative;
+      background:black;
+      overflow:hidden;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding: 5px;
+    }
+   
+    #player {
+      width: 100%;
+      max-width: 1280px;
+      aspect-ratio: 16/9;
+      border: none;
+      display: block;
+      margin: 0 auto;
+      box-shadow: none;
+      position: relative;
+      outline: none;
+    }
+    
+    /* Fullscreen Logo */
+    #fullscreen-logo {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 60px;
+      height: auto;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      display: none;
+    }
+    
+    .video-watermark {
+      position:absolute; top:10px; left:10px; width:50px; opacity:.7; z-index:10;
+    }
 
+    /* Channel box */
+    .channel-box {
+      flex:0 0 30%;
+      background:#1a1a1a;
+      display:flex;
+      flex-direction:column;
+      height:100%;
+      position:relative;
+    }
+
+    /* Channel list scroll area */
+    .channel-list {
+      flex:1;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding: 1rem;
+      padding-bottom: 30px;
+    }
+
+    .channel-list::-webkit-scrollbar { 
+      width: 10px; 
+    }
+    .channel-list::-webkit-scrollbar-thumb { 
+      background: red; 
+      border-radius: 5px; 
+    }
+
+    /* Search Box Styles */
+    .search-container {
+      background: #2a2a2a;
+      border: 1px solid white;
+      border-radius: 3px;
+      margin-left:2%;
+      margin-right:2%;
+      font-size: 10px;
+      padding: None;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 5px 15px;
+      border-radius: 5px;
+      border: none;
+      background: black;
+      color: white;
+      font-size: 10px;
+      outline: none;
+    }
+
+    .search-box:focus {
+      border-color: white;
+    }
+
+    .search-box::placeholder {
+      color: #888;
+    }
+
+    .search-results-info {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      color: #aaa;
+      background: #2a2a2a;
+      border-bottom: 1px solid #444;
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 25px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 5px;
+    }
+
+    /* Channel item styles with focus state for TV remote navigation */
+    .channel-item {
+      background: #333;
+      border-radius: 5px;
+      text-align: center;
+      box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
+      /* এখানে Box Shadow ছিলো 12px*/
+      transition: all 0.2s ease;
+      cursor: pointer;
+      transform: scale(0.98);
+      animation: fadeInUp 5s ease both;
+      /* animation: fadeInUp ছিলো 0.6s কিন্তু আমি ৫ সেকেন্ড দিয়েছি যাতে প্লেলিস্ট স্লো মোশনে লোড হয় */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      outline: none;
+      border: 2px solid transparent;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .channel-item:hover {
+      border: 1px solid white;
+      box-shadow: 0 0 2px white, 0 0 3px white;
+      background: red;
+    }
+
+    /* Focus state for TV remote navigation */
+    .channel-item:focus {
+      outline: none;
+    }
+
+    .channel-item.channel-selected {
+      border: 1px solid white;
+      box-shadow: 0 0 2px white, 0 0 6px white;
+      background: black;
+    }
+
+    .channel-item img {
+      width: 100%;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 2px;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .channel-name {
+      margin: 0;
+      font-size: 10px !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      text-align: center;
+      color: #fff;
+      user-select: none;
+    }
+
+    .channel-item small {
+      display: block;
+      font-size: 0.8rem;
+      color: #ccc;
+    }
+    
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #FFF;
+      border-bottom-color: red;
+      border-radius: 50%;
+      display: block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Loading indicator */
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #aaa;
+    }
+    
+    /* Firebase Counter Styles */
+    #counters {
+      text-align: center;
+      background-color: #4f4e4e;
+      border:1px solid white;
+      border-radius: 3px;
+      margin: 1px 0;
+      margin-left:2%;
+      margin-right:2%;
+      font-size: 10px;
+      padding: None;
+    }
+
+    #counters div {
+      margin: 1px 0;
+    }
+
+    /* Playlist container and divider */
+    .playlist-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+      gap: 1rem;
+      min-height: 100%;
+    }
+    
+    .playlist-divider {
+      height: 8px;
+      background: linear-gradient(90deg, transparent, #555, transparent);
+      margin: 0.5rem 0;
+      width: 100%;
+      grid-column: 1 / -1;
+    }
+    
+    /* PIP Button Custom Styling */
+    .pip-button {
+      background: rgba(0, 0, 0, 0.7) !important;
+      border: 1px solid white !important;
+      border-radius: 4px !important;
+    }
+
+    /* Mobile Styles */
+    @media (max-width: 768px) {
       .main-container {
-        display: flex;
-        flex-direction: row;
+        flex-direction: column;
         height: 100vh;
-        width: 100vw;
-      }
-
-      /* Player */
-      .video-container {
-        flex: 0 0 70%;
-        background: black;
-        display: flex;
-        flex-direction: column;
-        padding: 2px;
-      }
-
-      .video-wrapper {
-        width: 100%;
-        flex: 1;
-        position: relative;
-        background: black;
         overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 2px;
       }
-
-      #player {
-        width: 100%;
-        max-width: 1280px;
-        aspect-ratio: 16/9;
-        border: none;
-        display: block;
-        margin: 0 auto;
-        box-shadow: none;
-        position: relative;
-        outline: none;
+      
+      .video-container {
+        flex: 0 0 40%;
+        padding: 5px;
       }
-
-      /* Fullscreen Logo */
-      #fullscreen-logo {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        width: 60px;
-        height: auto;
-        z-index: 9999;
-        opacity: 0;
-        pointer-events: none;
-        display: none;
-      }
-
-      .video-watermark {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        width: 50px;
-        opacity: .7;
-        z-index: 10;
-      }
-
-      /* Channel box */
+      
       .channel-box {
-        flex: 0 0 30%;
-        background: #1a1a1a;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        position: relative;
+        flex: 0 0 60%;
+        overflow: hidden;
       }
-
-      /* Channel list scroll area */
-      .channel-list {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 1rem;
-        padding-bottom: 30px;
+      
+      .playlist-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        padding: 0.5rem;
       }
-
-      .channel-list::-webkit-scrollbar {
-        width: 10px;
-      }
-
-      .channel-list::-webkit-scrollbar-thumb {
-        background: red;
-        border-radius: 5px;
-      }
-
-      /* Search Box Styles */
-      .search-container {
-        background: #2a2a2a;
-        border: 1px solid white;
-        border-radius: 3px;
-        margin-left: 2%;
-        margin-right: 2%;
-        font-size: 10px;
-        padding: None;
-      }
-
-      .search-box {
-        width: 100%;
-        padding: 5px 15px;
-        border-radius: 5px;
-        border: none;
-        background: black;
-        color: white;
-        font-size: 10px;
-        outline: none;
-      }
-
-      .search-box:focus {
-        border-color: white;
-      }
-
-      .search-box::placeholder {
-        color: #888;
-      }
-
-      .search-results-info {
-        text-align: center;
-        padding: 5px;
-        font-size: 12px;
-        color: #aaa;
-        background: #2a2a2a;
-        border-bottom: 1px solid #444;
-      }
-
-      .clear-search {
-        position: absolute;
-        right: 25px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #888;
-        cursor: pointer;
-        font-size: 16px;
-        padding: 5px;
-      }
-
-      /* Channel item styles with focus state for TV remote navigation */
+      
       .channel-item {
-        background: #333;
-        border-radius: 5px;
-        text-align: center;
-        box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
-        /* এখানে Box Shadow ছিলো 12px*/
-        transition: all 0.2s ease;
-        cursor: pointer;
-        transform: scale(0.98);
-        animation: fadeInUp 5s ease both;
-        /* animation: fadeInUp ছিলো 0.6s কিন্তু আমি ৫ সেকেন্ড দিয়েছি যাতে প্লেলিস্ট স্লো মোশনে লোড হয় */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        outline: none;
-        border: 2px solid transparent;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
+        padding: 5%;
       }
-
-      .channel-item:hover {
-        border: 1px solid white;
-        box-shadow: 0 0 2px white, 0 0 3px white;
-        background: red;
-      }
-
-      /* Focus state for TV remote navigation */
-      .channel-item:focus {
-        outline: none;
-      }
-
-      .channel-item.channel-selected {
-        border: 1px solid white;
-        box-shadow: 0 0 2px white, 0 0 6px white;
-        background: black;
-      }
-
+      
       .channel-item img {
         width: 100%;
         height: 70px;
         object-fit: contain;
-        margin-bottom: 2px;
-        pointer-events: none;
-        user-select: none;
-        -webkit-user-drag: none;
       }
-
+      
       .channel-name {
-        margin: 0;
-        font-size: 10px !important;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 100%;
-        text-align: center;
-        color: #fff;
-        user-select: none;
+        font-size: 8px !important;
       }
-
-      .channel-item small {
-        display: block;
-        font-size: 0.8rem;
-        color: #ccc;
+      
+      #player {
+        aspect-ratio: 16/9;
+        max-width: 100%;
       }
-
-      .loader {
-        width: 48px;
-        height: 48px;
-        border: 5px solid #FFF;
-        border-bottom-color: red;
-        border-radius: 50%;
-        display: block;
-        box-sizing: border-box;
-        animation: rotation 1s linear infinite;
-        margin: 0 auto;
-      }
-
-      @keyframes rotation {
-        0% {
-          transform: rotate(0deg);
-        }
-
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      @keyframes fadeInUp {
-        0% {
-          transform: translateY(0);
-          opacity: 0;
-        }
-
-        100% {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-
-      /* Loading indicator */
-      .loading {
-        text-align: center;
+      
+      .video-wrapper {
         padding: 2px;
-        color: #aaa;
       }
-
-      /* Firebase Counter Styles */
-      #counters {
-        text-align: center;
-        background-color: #4f4e4e;
-        border: 1px solid white;
-        border-radius: 3px;
-        margin: 1px 0;
-        margin-left: 2%;
-        margin-right: 2%;
-        font-size: 10px;
-        padding: None;
+      
+      #fullscreen-logo {
+        width: 40px !important;
+        top: 10px !important;
+        right: 10px !important;
       }
-
-      #counters div {
-        margin: 1px 0;
-      }
-
-      /* Playlist container and divider */
-      .playlist-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-        gap: 1rem;
-        min-height: 100%;
-      }
-
-      .playlist-divider {
-        height: 8px;
-        background: linear-gradient(90deg, transparent, #555, transparent);
-        margin: 0.5rem 0;
-        width: 100%;
-        grid-column: 1 / -1;
-      }
-
-      /* PIP Button Custom Styling */
+      
       .pip-button {
-        background: rgba(0, 0, 0, 0.7) !important;
-        border: 1px solid white !important;
-        border-radius: 4px !important;
+        transform: scale(0.9);
       }
-    </style>
-    <style>
-      /* Desktop Only (শুধু PC/ডেস্কটপে) */
-      @media (min-width: 1024px) {
-
-        /* Desktop-এ hover ইফেক্ট ভালোভাবে দেখানোর জন্য */
-        .channel-item:hover {
-          border: 1px solid white;
-          box-shadow: 0 0 2px white, 0 0 6px white;
-          background: red;
-          transform: translateY(-8px) scale(1.03);
-        }
-
-        /* Desktop-এ স্ক্রলবার স্টাইলিং */
-        .channel-list::-webkit-scrollbar {
-          width: 12px;
-        }
-
-        /* Desktop-এ প্লেয়ারের সাইজ */
-        #player {
-          max-width: 1280px;
-        }
-
-        /* Desktop-এ লোগো সাইজ */
-        #fullscreen-logo {
-          width: 60px;
-        }
+      
+      #counters {
+        font-size: 8px;
+        margin: 2px 0;
+        margin-left: 1%;
+        margin-right: 1%;
       }
-    </style>
-    <style>
-      /* Mobile Styles */
-      @media (max-width: 768px) {
-        .main-container {
-          flex-direction: column;
-          height: 100vh;
-          overflow: hidden;
-        }
-
-        .video-container {
-          flex: 0 0 40%;
-          padding: 2px;
-        }
-
-        .channel-box {
-          flex: 0 0 60%;
-          overflow: hidden;
-        }
-
-        .playlist-container {
-          grid-template-columns: repeat(4, 1fr);
-          gap: 0.5rem;
-          padding: 0.5rem;
-        }
-
-        .channel-item {
-          padding: 2%;
-        }
-
-        /* .channel-item  এর এখানে  Padding ছিলো ৫%, এর কাজ হচ্ছে চ্যানেল গুলোর ছবির পাশে জায়গা কমিয়েছি  */
-        .channel-item img {
-          width: 100%;
-          height: 70px;
-          object-fit: contain;
-        }
-
-        .channel-name {
-          font-size: 8px !important;
-        }
-
-        #player {
-          aspect-ratio: 16/9;
-          max-width: 100%;
-        }
-
-        .video-wrapper {
-          padding: 2px;
-        }
-
-        #fullscreen-logo {
-          width: 40px !important;
-          top: 10px !important;
-          right: 10px !important;
-        }
-
-        .pip-button {
-          transform: scale(0.9);
-        }
-
-        #counters {
-          font-size: 8px;
-          margin: 2px 0;
-          margin-left: 1%;
-          margin-right: 1%;
-        }
-
-        .search-container {
-          margin-left: 1%;
-          margin-right: 1%;
-        }
-
-        .search-box {
-          font-size: 8px;
-          padding: 3px 10px;
-        }
-
-        .channel-list {
-          padding: 0.5rem;
-        }
+      
+      .search-container {
+        margin-left: 1%;
+        margin-right: 1%;
       }
-    </style>
-    <style>
-      /* Mobile Portrait Mode */
-      @media (max-width: 768px) and (orientation: portrait) {
-        .video-container {
-          flex: 0 0 40%;
-        }
-
-        .channel-box {
-          flex: 0 0 60%;
-        }
+      
+      .search-box {
+        font-size: 8px;
+        padding: 3px 10px;
       }
-    </style>
-    <style>
-      /* Mobile Landscape Mode */
-      @media (max-width: 768px) and (orientation: landscape) {
-        .video-container {
-          flex: 0 0 50%;
-        }
-
-        .channel-box {
-          flex: 0 0 50%;
-        }
+      
+      .channel-list {
+        padding: 0.5rem;
       }
-    </style>
-    <style>
-      /* Small Mobile Devices */
-      @media (max-width: 480px) {
-        .playlist-container {
-          grid-template-columns: repeat(4, 1fr);
-          gap: 0.3rem;
-          padding: 0.3rem;
-        }
+    }
 
-        .channel-item {
-          padding: 3%;
-        }
-
-        .channel-name {
-          font-size: 7px !important;
-        }
-
-        .channel-item img {
-          width: 100%;
-          height: 70px;
-        }
+    /* Mobile Portrait Mode */
+    @media (max-width: 768px) and (orientation: portrait) {
+      .video-container {
+        flex: 0 0 40%;
       }
-    </style>
-  
-  
+      
+      .channel-box {
+        flex: 0 0 60%;
+      }
+    }
+
+    /* Mobile Landscape Mode */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .video-container {
+        flex: 0 0 50%;
+      }
+      
+      .channel-box {
+        flex: 0 0 50%;
+      }
+    }
+
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+      .playlist-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.3rem;
+        padding: 0.3rem;
+      }
+      
+      .channel-item {
+        padding: 3%;
+      }
+      
+      .channel-name {
+        font-size: 7px !important;
+      }
+      
+      .channel-item img {
+        width: 100%;
+        height: 70px;
+      }
+    }
+  </style>
 </head>
 <body>
 
