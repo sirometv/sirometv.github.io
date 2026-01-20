@@ -99,58 +99,47 @@
       display: none;
     }
     
+    /* Video Watermark Base Styles - সব অবস্থায় দেখা যাবে */
     .video-watermark {
       position: absolute;
-      top: 68%;
-      left: 10%;
-      width: 8%;
+      left: 5%; /* ভিডিও প্লেয়ার এর থেকে ৫% দুরুত্বে */
+      bottom: 10%; /* ভিডিও প্লেয়ার এর নিচ থেকে ১০% উপরে */
+      width: 8%; /* ডিফল্ট সাইজ */
       opacity: 0.7;
-      z-index: 10;
-      display: block; /* ডিফল্টভাবে শো করবে */
+      z-index: 10000;
+      pointer-events: none;
+      display: block !important; /* সবসময় শো করবে */
     }
 
-    /* Fullscreen mode styles */
+    /* Fullscreen Mode Styles - সব রকমের ফুলস্ক্রিন সাপোর্ট */
     .video-wrapper:fullscreen .video-watermark,
     .video-wrapper:-webkit-full-screen .video-watermark,
     .video-wrapper:-moz-full-screen .video-watermark,
-    .video-wrapper:-ms-fullscreen .video-watermark {
-      display: block !important;
-      position: fixed;
-      top: 50%;
-      left: 5%;
-      width: 5%;
-      opacity: 0.7;
-      z-index: 10000;
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-
-    /* Also ensure watermark is visible when player is in fullscreen */
+    .video-wrapper:-ms-fullscreen .video-watermark,
     #player:fullscreen ~ .video-watermark,
     #player:-webkit-full-screen ~ .video-watermark,
     #player:-moz-full-screen ~ .video-watermark,
     #player:-ms-fullscreen ~ .video-watermark {
       display: block !important;
-      position: fixed;
-      top: 50%;
-      left: 5%;
-      width: 5%;
-      opacity: 0.7;
-      z-index: 10000;
-      transform: translateY(-50%);
-      pointer-events: none;
+      position: fixed !important;
+      left: 5% !important;
+      bottom: 10% !important;
+      width: 5% !important;
+      opacity: 0.7 !important;
+      z-index: 100000 !important; /* খুব বেশি z-index */
+      transform: none !important;
+      top: auto !important;
     }
 
-    /* PC Desktop - Always show watermark */
+    /* PC Desktop - সবসময় শো করবে */
     @media (min-width: 769px) {
       .video-watermark {
         display: block !important;
-        position: absolute;
-        top: 68%;
-        left: 10%;
-        width: 8%;
-        opacity: 0.7;
-        z-index: 10;
+        left: 5% !important;
+        bottom: 10% !important;
+        width: 8% !important;
+        top: auto !important;
+        transform: none !important;
       }
     }
 
@@ -366,7 +355,7 @@
       border-radius: 4px !important;
     }
 
-    /* Mobile Styles */
+    /* Tablet এবং Mobile - সবসময় শো করবে */
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
@@ -444,13 +433,18 @@
         padding: 0.5rem;
       }
       
-      /* Mobile Portrait - Hide watermark */
+      /* সবসময় ওয়াটারমার্ক শো করবে */
       .video-watermark {
-        display: none !important;
+        display: block !important;
+        left: 5% !important;
+        bottom: 10% !important;
+        width: 10% !important; /* মোবাইলে একটু বড় সাইজ */
+        top: auto !important;
+        transform: none !important;
       }
     }
 
-    /* Mobile Portrait Mode */
+    /* Mobile Portrait Mode - সবসময় শো করবে */
     @media (max-width: 768px) and (orientation: portrait) {
       .video-container {
         flex: 0 0 40%;
@@ -460,13 +454,18 @@
         flex: 0 0 60%;
       }
       
-      /* Hide watermark in portrait */
+      /* সবসময় ওয়াটারমার্ক শো করবে */
       .video-watermark {
-        display: none !important;
+        display: block !important;
+        left: 5% !important;
+        bottom: 10% !important;
+        width: 12% !important; /* পোর্ট্রেটে আরো বড় */
+        top: auto !important;
+        transform: none !important;
       }
     }
 
-    /* Mobile Landscape Mode */
+    /* Mobile Landscape Mode - সবসময় শো করবে */
     @media (max-width: 768px) and (orientation: landscape) {
       .video-container {
         flex: 0 0 50%;
@@ -476,20 +475,18 @@
         flex: 0 0 50%;
       }
       
-      /* Show watermark in landscape */
+      /* সবসময় ওয়াটারমার্ক শো করবে */
       .video-watermark {
         display: block !important;
-        position: absolute;
-        top: 50%;
-        left: 5%;
-        width: 5%;
-        opacity: 0.7;
-        z-index: 10;
-        transform: translateY(-50%);
+        left: 5% !important;
+        bottom: 10% !important;
+        width: 8% !important; /* ল্যান্ডস্কেপে সামান্য ছোট */
+        top: auto !important;
+        transform: none !important;
       }
     }
 
-    /* Small Mobile Devices */
+    /* Small Mobile Devices - সবসময় শো করবে */
     @media (max-width: 480px) {
       .playlist-container {
         grid-template-columns: repeat(4, 1fr);
@@ -510,16 +507,26 @@
         height: 70px;
       }
       
-      /* Hide watermark on small devices */
+      /* সবসময় ওয়াটারমার্ক শো করবে */
       .video-watermark {
-        display: none !important;
+        display: block !important;
+        left: 5% !important;
+        bottom: 10% !important;
+        width: 15% !important; /* ছোট ডিভাইসে আরো বড় */
+        top: auto !important;
+        transform: none !important;
       }
     }
     
-    /* Very small screens */
+    /* Very small screens - সবসময় শো করবে */
     @media (max-width: 320px) {
       .video-watermark {
-        display: none !important;
+        display: block !important;
+        left: 5% !important;
+        bottom: 10% !important;
+        width: 18% !important; /* খুব ছোট স্ক্রিনে আরো বড় */
+        top: auto !important;
+        transform: none !important;
       }
     }
   </style>
@@ -669,27 +676,22 @@
         }
       }
       
-      // Always show watermark in fullscreen
-      if (watermarkElement && isFullscreen) {
+      // সবসময় ওয়াটারমার্ক শো করবে
+      if (watermarkElement) {
         watermarkElement.style.display = 'block';
-        watermarkElement.style.width = '5%';
-        watermarkElement.style.left = '5%';
-        watermarkElement.style.top = '50%';
-        watermarkElement.style.transform = 'translateY(-50%)';
-      } else if (watermarkElement && !isFullscreen) {
-        // When exiting fullscreen, revert to normal positioning
-        updateWatermarkVisibility();
-      }
-      
-      // When exiting fullscreen, stay in current mode
-      if (!isFullscreen) {
-        setTimeout(() => {
-          if (currentMode === 'channels') {
-            focusOnChannels();
-          } else {
-            focusOnPlayer();
-          }
-        }, 100);
+        
+        if (isFullscreen) {
+          watermarkElement.style.width = '5%';
+          watermarkElement.style.left = '5%';
+          watermarkElement.style.bottom = '10%';
+          watermarkElement.style.top = 'auto';
+          watermarkElement.style.transform = 'none';
+          watermarkElement.style.position = 'fixed';
+          watermarkElement.style.zIndex = '100000';
+        } else {
+          // নরমাল মোডে আপডেট করুন
+          updateWatermarkVisibility();
+        }
       }
     }
   });
@@ -704,32 +706,48 @@
                          document.mozFullScreenElement || 
                          document.msFullscreenElement;
     
-    if (isFullscreen) return; // Fullscreen is handled separately
+    // সব অবস্থায় ওয়াটারমার্ক শো করবে
+    watermarkElement.style.display = 'block';
     
-    const isMobileLandscape = window.matchMedia('(max-width: 768px) and (orientation: landscape)').matches;
-    const isDesktop = window.matchMedia('(min-width: 769px)').matches;
-    const isMobilePortrait = window.matchMedia('(max-width: 768px) and (orientation: portrait)').matches;
-    
-    if (isDesktop) {
-      // PC/Desktop - Always show
-      watermarkElement.style.display = 'block';
-      watermarkElement.style.width = '8%';
-      watermarkElement.style.left = '10%';
-      watermarkElement.style.top = '68%';
-      watermarkElement.style.transform = 'none';
-    } else if (isMobileLandscape) {
-      // Mobile Landscape - Show with adjusted size
-      watermarkElement.style.display = 'block';
+    if (isFullscreen) {
+      // ফুলস্ক্রিনে সাইজ সামান্য ছোট
       watermarkElement.style.width = '5%';
       watermarkElement.style.left = '5%';
-      watermarkElement.style.top = '50%';
-      watermarkElement.style.transform = 'translateY(-50%)';
-    } else if (isMobilePortrait) {
-      // Mobile Portrait - Hide
-      watermarkElement.style.display = 'none';
+      watermarkElement.style.bottom = '10%';
+      watermarkElement.style.top = 'auto';
+      watermarkElement.style.transform = 'none';
+      watermarkElement.style.position = 'fixed';
+      watermarkElement.style.zIndex = '100000';
     } else {
-      // Default - Show
-      watermarkElement.style.display = 'block';
+      // নরমাল মোডে স্ক্রিন সাইজ অনুযায়ী সাইজ সেট করবে
+      const isDesktop = window.matchMedia('(min-width: 769px)').matches;
+      const isTablet = window.matchMedia('(max-width: 768px)').matches;
+      const isMobilePortrait = window.matchMedia('(max-width: 768px) and (orientation: portrait)').matches;
+      const isMobileLandscape = window.matchMedia('(max-width: 768px) and (orientation: landscape)').matches;
+      const isSmallMobile = window.matchMedia('(max-width: 480px)').matches;
+      const isVerySmall = window.matchMedia('(max-width: 320px)').matches;
+      
+      // সব অবস্থায় একই অবস্থান
+      watermarkElement.style.left = '5%';
+      watermarkElement.style.bottom = '10%';
+      watermarkElement.style.top = 'auto';
+      watermarkElement.style.transform = 'none';
+      watermarkElement.style.position = 'absolute';
+      watermarkElement.style.zIndex = '10000';
+      
+      if (isVerySmall) {
+        watermarkElement.style.width = '18%';
+      } else if (isSmallMobile) {
+        watermarkElement.style.width = '15%';
+      } else if (isMobilePortrait) {
+        watermarkElement.style.width = '12%';
+      } else if (isMobileLandscape) {
+        watermarkElement.style.width = '8%';
+      } else if (isTablet) {
+        watermarkElement.style.width = '10%';
+      } else if (isDesktop) {
+        watermarkElement.style.width = '8%';
+      }
     }
   }
 
