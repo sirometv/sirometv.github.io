@@ -901,7 +901,110 @@
       focusOnChannels();
       setTimeout(() => document.getElementById('channelList').scrollTop = 0, 100);
     }
+    // প্রথমে CSS Inject করি
+    function injectCustomStyles() {
+      const style = document.createElement('style');
+      style.textContent = `
+        /* Seekbar container customization */
+        .media-control-layer[data-controls] .bar-container[data-seekbar] {
+          width: 100% !important;
+          height: 5px !important;
+        }
+        
+        /* Bar background customization */
+        .media-control-layer[data-controls] .bar-container[data-seekbar] .bar-background[data-seekbar] {
+          width: 100%;
+          height: 5px;
+          position: relative;
+          top: 12px;
+          background-color: #666 !important;
+        }
+        
+        /* Bar fill customization (red color) */
+        .media-control[data-media-control] .media-control-layer[data-controls] .bar-container[data-seekbar] .bar-background[data-seekbar] .bar-fill-1[data-seekbar] {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 0;
+          height: 100%;
+          background-color: red !important;
+          transition: all .1s ease-out;
+        }
+        
+        /* Scrubber customization */
+        .media-control[data-media-control] .media-control-layer[data-controls] .bar-scrubber[data-seekbar] {
+          position: absolute;
+          -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+          top: auto;
+          left: 0;
+          width: 20px;
+          height: 20px;
+          opacity: 1;
+          transition: all .1s ease-out;
+          background-color: red;
+          border-radius: 50%;
+          border: 2px solid white;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        /* Watermark customization - Override default Clappr watermark positions */
+        .clappr-watermark[data-watermark] {
+          position: absolute;
+          min-width: 70px;
+          max-width: 200px;
+          width: 12%;
+          text-align: center;
+          z-index: 10;
+          left: 3% !important;
+          bottom: 7% !important;
+          top: auto !important;
+          right: auto !important;
+          transform: scale(0.7) !important;
+          transform-origin: left bottom !important;
+        }
+        
+        /* Override all default positions */
+        .clappr-watermark[data-watermark-bottom-left],
+        .clappr-watermark[data-watermark-bottom-right],
+        .clappr-watermark[data-watermark-top-left],
+        .clappr-watermark[data-watermark-top-right] {
+          left: 3% !important;
+          bottom: 7% !important;
+          top: auto !important;
+          right: auto !important;
+        }
+        
+        /* Fullscreen লোগো লুকানো */
+        #fullscreen-logo {
+          display: none !important;
+          opacity: 0 !important;
+        }
+        
+        /* Watermark image styling */
+        .clappr-watermark[data-watermark] img {
+          max-width: 100%;
+          border: none;
+          box-shadow: none;
+        }
+        
+        /* Watermark link styling */
+        .clappr-watermark[data-watermark] a {
+          outline: none;
+          cursor: pointer;
+        }
+        
+        /* Scrubber hover effect */
+        .media-control[data-media-control] .media-control-layer[data-controls] .bar-scrubber[data-seekbar]:hover {
+          transform: translateX(-50%) scale(1.2);
+          background-color: #ff3333;
+        }
+      `;
+      document.head.appendChild(style);
+    }
     
+    // CSS Inject করি
+    injectCustomStyles();
     // ===== INIT PLAYER (FIXED PIP ICON) =====
     function initPlayer(url, logo) {
       // Make sure ClapprPipMode is available
@@ -928,6 +1031,8 @@
         width: "100%",
         height: "100%",
         watermark: "https://i.postimg.cc/d1hHy4ss/11.png",
+        watermarkPosition: 'custom', // 'custom' ব্যবহার করছি যাতে আমাদের CSS কাজ করে
+
         plugins: [HlsjsPlayback, LevelSelector, pipPlugin, FullscreenLogoPlugin].filter(Boolean),
         mediacontrol: { 
           seekbar: "#0a60f5", 
