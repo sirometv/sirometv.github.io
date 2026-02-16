@@ -1,14 +1,15 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>  
   <meta charset="UTF-8">
   <title>Sirome TV</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="author" content="Sirome Live Sports">
   <meta name="referrer" content="no-referrer">
   <meta property="og:image" content="https://i.postimg.cc/d1hHy4ss/11.png">
-  <script src="https://cdn.jsdelivr.net/npm/@clappr/hlsjs-playback@1.2.0/dist/hlsjs-playback.min.js"></script>
+  
   <!-- Favicon -->
   <link rel="icon" href="https://i.postimg.cc/d1hHy4ss/11.png" type="image/png">
   
@@ -1378,62 +1379,57 @@
   
   <script>
     // Initialize player
-function initPlayer(url, logo) {
-  player = new Clappr.Player({
-    source: url,
-    parentId: "#player",
-    autoPlay: true,
-    mute: false,
-    width: "100%",
-    height: "100%",
-    plugins: [
-      HlsjsPlayback, 
-      LevelSelector,
-      window.ClapprPipMode ? window.ClapprPipMode.PipButton : null,
-      FullscreenLogoPlugin
-    ].filter(Boolean),
-    mediacontrol: { 
-      seekbar: "#0a60f5", 
-      buttons: "white" 
-    },
-    // ফixed: সঠিকভাবে স্ট্রিংস কনফিগার করা হয়েছে
-    strings: {
-      live: "Sirome TV 🔴",
-      backToLive: "Back to live",
-      defaultErrorTitle: "SIROME TV Could not play video.",
-      defaultErrorMessage: "We are having trouble playing our current channel, please try again later.",
-      playbackNotSupported: "Your browser does not support the playback of this video. Please try using a different browser. Thanks Stay With Sirome TV",
-    },
-    poster: "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif"
-  });
-  
-  // Store player globally
-  window.player = player;
-  
-  // Add event listener for when video starts playing
-  player.on('play', function() {
-    const posterElement = document.querySelector('.poster');
-    if (posterElement) {
-      posterElement.style.opacity = '0';
-      setTimeout(() => {
-        posterElement.style.display = 'none';
-      }, 1000);
+    function initPlayer(url, logo) {
+      player = new Clappr.Player({
+        source: url,
+        parentId: "#player",
+        autoPlay: true,
+        mute: false,
+        width: "100%",
+        height: "100%",
+        plugins: [
+          HlsjsPlayback, 
+          LevelSelector,
+          window.ClapprPipMode ? window.ClapprPipMode.PipButton : null,
+          FullscreenLogoPlugin
+        ].filter(Boolean),
+        mediacontrol: { 
+          seekbar: "#0a60f5", 
+          buttons: "white" 
+        },
+        strings: {
+          en: {
+            live: "Sirome TV 🔴",
+            back_to_live: "Back to live",
+            default_error_title: "SIROME TV Could not play video.",
+            default_error_message: "We are having trouble playing our current channel, please try again later.",
+            playback_not_supported: "Your browser does not support the playback of this video. Please try using a different browser. Thanks Stay With Sirome TV",
+          }
+        },
+        poster: "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif"
+      });
+      
+      // Store player globally
+      window.player = player;
+      
+      // Add event listener for when video starts playing
+      player.on('play', function() {
+        const posterElement = document.querySelector('.poster');
+        if (posterElement) {
+          posterElement.style.opacity = '0';
+          setTimeout(() => {
+            posterElement.style.display = 'none';
+          }, 1000);
+        }
+      });
+      
+      // ফুলস্ক্রিন লোগো শুরুতে লুকানো রাখুন
+      const logoElement = document.getElementById('fullscreen-logo');
+      if (logoElement) {
+        logoElement.style.display = 'none';
+        logoElement.style.opacity = '0';
+      }
     }
-  });
-  
-  // ফুলস্ক্রিন লোগো শুরুতে লুকানো রাখুন
-  const logoElement = document.getElementById('fullscreen-logo');
-  if (logoElement) {
-    logoElement.style.display = 'none';
-    logoElement.style.opacity = '0';
-  }
-  
-  // এরর হ্যান্ডলিং ইম্প্রুভ করা হয়েছে
-  player.on('error', function(error) {
-    console.log('Player error:', error);
-    // এরর হলে কিছু করার প্রয়োজন নেই, প্লেয়ার নিজেই ম্যানেজ করবে
-  });
-}
   </script>
   
   <script>
