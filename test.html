@@ -19,8 +19,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   
   <!-- Clappr Core Player and Plugins -->
-  <script src="https://cdn.jsdelivr.net/gh/sirometv/sirometv.github.io@main/clapprlatest/dist/clappr.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/level-selector@0.2.0/dist/level-selector.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@clappr/hlsjs-playback@1.0.1/dist/hlsjs-playback.min.js"></script>
   <!-- PIP Mode Plugin for Clappr -->
@@ -1396,6 +1395,15 @@
         mediacontrol: { 
           seekbar: "#0a60f5", 
           buttons: "white" 
+        },
+        strings: {
+          en: {
+            live: "Sirome TV 🔴",
+            back_to_live: "Back to live",
+            default_error_title: "SIROME TV Could not play video.",
+            default_error_message: "We are having trouble playing our current channel, please try again later.",
+            playback_not_supported: "Your browser does not support the playback of this video. Please try using a different browser. Thanks Stay With Sirome TV",
+          }
         },
         poster: "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif"
       });
