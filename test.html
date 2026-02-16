@@ -154,7 +154,6 @@
       margin-left: 2%;
       margin-right: 2%;
       font-size: 10px;
-      padding: None;
     }
     
     .search-box {
@@ -198,7 +197,7 @@
       padding: 5px;
     }
     
-    /* Channel item styles with focus state for TV remote navigation */
+    /* Channel item styles - FIXED DIMENSIONS FOR ALL CHANNELS */
     .channel-item {
       background: #333;
       border-radius: 5px;
@@ -206,19 +205,23 @@
       box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
       transition: all 0.2s ease;
       cursor: pointer;
-      transform: scale(0.98);
-      animation: fadeInUp 0.3s ease both;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100%;
+      justify-content: flex-start;
       outline: none;
       border: 2px solid transparent;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      
+      /* Fixed dimensions for all channel items */
+     /* width: 100%;*/*/
+     /* height: auto;*/
+     /* padding: none; */
+     
     }
     
+    /* Hover effect */
     .channel-item:hover {
       border: 1px solid white;
       box-shadow: 0 0 2px white, 0 0 3px white;
@@ -236,32 +239,41 @@
       background: black;
     }
     
+    /* Logo styles - fixed size */
     .channel-item img {
       width: 100%;
-      height: 70px;
+      height: auto;
       object-fit: contain;
-      margin-bottom: 2px;
+      margin-bottom: 5px;
       pointer-events: none;
       user-select: none;
       -webkit-user-drag: none;
       opacity: 0;
       transition: opacity 0.2s ease;
+      flex-shrink: 0;
     }
     
     .channel-item img.loaded {
       opacity: 1;
     }
     
+    /* Channel name styles - fixed height with ellipsis */
     .channel-name {
       margin: 0;
       font-size: 10px !important;
+      line-height: 1.2;
+      max-height: 2.4em;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      word-break: break-word;
       width: 100%;
       text-align: center;
       color: #fff;
       user-select: none;
+      padding: 0 2px;
     }
     
     .channel-item small {
@@ -341,25 +353,24 @@
       margin-left: 2%;
       margin-right: 2%;
       font-size: 10px;
-      padding: None;
     }
     
     #counters div {
       margin: 1px 0;
     }
     
-    /* Playlist container and divider */
+    /* Playlist container - fixed grid */
     .playlist-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
       min-height: 100%;
     }
     
     .playlist-divider {
-      height: 8px;
-      background: linear-gradient(90deg, transparent, #555, transparent);
-      margin: 0.5rem 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ff4444, transparent);
+      margin: 4px 0;
       width: 100%;
       grid-column: 1 / -1;
     }
@@ -368,27 +379,27 @@
   <style>
     /* Desktop Only */
     @media (min-width: 1024px) {
-      /* Desktop-এ hover ইফেক্ট ভালোভাবে দেখানোর জন্য */
       .channel-item:hover {
         border: 1px solid white;
         box-shadow: 0 0 2px white, 0 0 6px white;
         background: red;
-        transform: translateY(-8px) scale(1.03);
+        transform: translateY(-4px) scale(1.02);
       }
       
-      /* Desktop-এ স্ক্রলবার স্টাইলিং */
       .channel-list::-webkit-scrollbar {
         width: 12px;
       }
       
-      /* Desktop-এ প্লেয়ারের সাইজ */
       #player {
         max-width: 1280px;
       }
       
-      /* Desktop-এ লোগো সাইজ */
       #fullscreen-logo {
         width: 60px;
+      }
+      
+      .playlist-container {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* এটার মধ্যে 110px এর বদল শুধু মাত্র 4 দিলে বা 80px দিলে পিসিতে ৩ টি করে চ্যানেল শো করবে */
       }
     }
   </style>
@@ -414,22 +425,24 @@
       
       .playlist-container {
         grid-template-columns: repeat(4, 1fr);
-        gap: 0.5rem;
-        padding: 0.5rem;
+        gap: 4px;
+        padding: 4px;
       }
       
       .channel-item {
-        padding: 2%;
+      width:100%;
+        height: auto;
+        padding: 4px 2px;
       }
       
       .channel-item img {
         width: 100%;
-        height: 70px;
-        object-fit: contain;
+        height: auto;
       }
       
       .channel-name {
         font-size: 8px !important;
+        -webkit-line-clamp: 2;
       }
       
       #player {
@@ -471,7 +484,6 @@
   </style>
   
   <style>
-    /* Mobile Portrait Mode */
     @media (max-width: 768px) and (orientation: portrait) {
       .video-container {
         flex: 0 0 40%;
@@ -484,7 +496,6 @@
   </style>
   
   <style>
-    /* Mobile Landscape Mode */
     @media (max-width: 768px) and (orientation: landscape) {
       .video-container {
         flex: 0 0 50%;
@@ -497,25 +508,26 @@
   </style>
   
   <style>
-    /* Small Mobile Devices */
     @media (max-width: 480px) {
       .playlist-container {
         grid-template-columns: repeat(4, 1fr);
-        gap: 0.3rem;
-        padding: 0.3rem;
+        gap: 8px; /* মোবাইলের চ্যানেলের গেইফ */
+        padding: 3px;
       }
       
-      .channel-item {
-        padding: 3%;
-      }
-      
-      .channel-name {
-        font-size: 7px !important;
+      .channel-item { /* এটি মোবাইলের লগোর সাইজ */
+        width:100%;
+        height: auto;
+        padding: 1px 1px;
       }
       
       .channel-item img {
-        width: 100%;
+        width: 100px;
         height: 70px;
+      }
+      
+      .channel-name {
+        font-size: 10px !important;
       }
     }
   </style>
@@ -531,7 +543,7 @@
         <div class="video-loading-overlay" id="videoLoadingOverlay">
           <div class="loader"></div>
         </div>
-        <!-- Fullscreen Logo (will be controlled by JavaScript) -->
+        <!-- Fullscreen Logo -->
         <img id="fullscreen-logo" src="https://i.postimg.cc/d1hHy4ss/11.png" alt="Sirome TV Logo">
       </div>
       
@@ -581,9 +593,9 @@
     firebase.initializeApp(firebaseConfig);
     window.db = firebase.database();
     
-    // Playlist URLs - আপনার প্রয়োজনমত আপডেট করুন
+    // Playlist URLs
     const m3u1Url = 'https://raw.githubusercontent.com/sirometv/playlist/main/sirometv.m3u';
-    const m3u2Url = 'https://raw.githubusercontent.com/sirometv/playlist/main/Yupp.m3u';
+    const m3u2Url = 'https://raw.githubusercontent.com/sirometv/playlist/main/sirometvsports.m3u';
     const m3u3Url = '*/';
     const m3u4Url = '*/';
     const m3u5Url = '*/';
@@ -606,7 +618,7 @@
     let lastEnterPressTime = 0;
     let lastKeyPressTime = 0;
     let isInFullscreen = false;
-    let currentMode = 'channels'; // 'channels' or 'player'
+    let currentMode = 'channels';
     let lastNormalModeTime = 0;
     let isDoubleClickMode = false;
     let focusDebounceTimer = null;
@@ -673,7 +685,6 @@
               logoElement.style.display = 'none';
             }, 300);
             
-            // When exiting fullscreen, stay in current mode
             setTimeout(() => {
               if (currentMode === 'channels') {
                 focusOnChannels();
@@ -754,7 +765,6 @@
       adsRef.child("totalClicked").transaction(c => (c || 0) + 1);
     }
     
-    // Updated for new Monetag zone
     if (typeof window.show_9978881_click_callback === 'undefined') {
       window.show_9978881_click_callback = incrementAdClicked;
     }
@@ -786,19 +796,16 @@
     }
     
     function setFocus(index) {
-      // Debounce focus changes
       if (focusDebounceTimer) {
         clearTimeout(focusDebounceTimer);
       }
       
       focusDebounceTimer = setTimeout(() => {
-        // Remove focus from all items
         channelItems.forEach(item => {
           item.classList.remove('channel-selected');
           item.setAttribute('tabindex', '-1');
         });
         
-        // Set focus to new index
         if (channelItems.length > 0 && index >= 0 && index < channelItems.length) {
           currentFocusIndex = index;
           const selectedItem = channelItems[currentFocusIndex];
@@ -806,7 +813,6 @@
           selectedItem.classList.add('channel-selected');
           selectedItem.setAttribute('tabindex', '0');
           
-          // Smooth scroll into view
           requestAnimationFrame(() => {
             selectedItem.scrollIntoView({
               behavior: 'smooth',
@@ -825,7 +831,6 @@
       if (currentFocusIndex >= columns) {
         setFocus(currentFocusIndex - columns);
       } else {
-        // Go to last row if at top
         const rows = Math.ceil(channelItems.length / columns);
         const lastRowStart = (rows - 1) * columns;
         const targetIndex = Math.min(lastRowStart + (currentFocusIndex % columns), channelItems.length - 1);
@@ -840,7 +845,6 @@
       if (currentFocusIndex + columns < channelItems.length) {
         setFocus(currentFocusIndex + columns);
       } else {
-        // Go to first row if at bottom
         setFocus(currentFocusIndex % columns);
       }
     }
@@ -851,7 +855,6 @@
       if (currentFocusIndex > 0) {
         setFocus(currentFocusIndex - 1);
       } else {
-        // Go to last item
         setFocus(channelItems.length - 1);
       }
     }
@@ -862,7 +865,6 @@
       if (currentFocusIndex < channelItems.length - 1) {
         setFocus(currentFocusIndex + 1);
       } else {
-        // Go to first item
         setFocus(0);
       }
     }
@@ -871,21 +873,15 @@
       const now = Date.now();
       
       if (isInFullscreen) {
-        // In fullscreen mode
         if (now - lastEnterPressTime < 1000) {
-          // Double press in fullscreen: Play/Pause
           togglePlayPause();
         } else {
-          // Single press in fullscreen: Exit to normal mode
           exitToNormalMode();
         }
       } else {
-        // In normal mode
         if (now - lastEnterPressTime < 1000) {
-          // Double press in normal mode: Enter fullscreen
           enterFullscreen();
         } else {
-          // Single press in normal mode: Select channel
           selectChannel();
         }
       }
@@ -914,11 +910,9 @@
     
     function exitToNormalMode() {
       if (isInFullscreen && player && player.core) {
-        // Exit fullscreen
         player.core.toggleFullscreen();
       }
       
-      // Switch to channels mode after a short delay
       setTimeout(() => {
         switchToChannelsMode();
       }, 300);
@@ -941,7 +935,6 @@
         playerElement.focus();
       }
       
-      // Remove focus from channel items
       channelItems.forEach(item => {
         item.classList.remove('channel-selected');
         item.setAttribute('tabindex', '-1');
@@ -963,13 +956,9 @@
     
     function handleNavigationKey(key) {
       const now = Date.now();
-      
-      // Update key press time
       lastKeyPressTime = now;
       
-      // Handle based on current mode
       if (currentMode === 'channels') {
-        // In channels mode, navigate channels
         switch(key) {
           case 'ArrowUp':
             navigateUp();
@@ -985,7 +974,6 @@
             break;
         }
       } else if (currentMode === 'player' && !isInFullscreen) {
-        // In player mode (not fullscreen), arrow keys switch to channels mode
         switch(key) {
           case 'ArrowUp':
           case 'ArrowDown':
@@ -1014,17 +1002,13 @@
         case 'Escape':
         case 'Backspace':
           if (isInFullscreen) {
-            // Exit fullscreen
             exitToNormalMode();
           } else if (currentMode === 'player') {
-            // Switch to channels mode
             switchToChannelsMode();
           }
-          // In channels mode, do nothing (stay in channels mode)
           break;
           
         case 'Tab':
-          // Toggle between player and channels mode
           if (currentMode === 'channels') {
             focusOnPlayer();
           } else {
@@ -1045,16 +1029,13 @@
       return Math.max(columns, 3);
     }
     
-    // TV Remote Key Handling
     function handleTVRemoteKey(event) {
       const key = event.key;
       
-      // Prevent default for navigation keys
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' ', 'Escape', 'Tab', 'Backspace'].includes(key)) {
         event.preventDefault();
       }
       
-      // Handle navigation keys
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
         handleNavigationKey(key);
       } else {
@@ -1069,19 +1050,15 @@
       loadChannels();
       setupSearch();
       
-      // Add TV remote key listener
       document.addEventListener('keydown', handleTVRemoteKey);
       
-      // Start in channels mode
       switchToChannelsMode();
       
-      // Hide loading overlay initially
       const loadingOverlay = document.getElementById('videoLoadingOverlay');
       if (loadingOverlay) {
         loadingOverlay.classList.add('hidden');
       }
       
-      // Handle clicks to switch focus
       document.addEventListener('click', function(e) {
         if (e.target.closest('.channel-item')) {
           const clickedItem = e.target.closest('.channel-item');
@@ -1096,7 +1073,6 @@
         }
       });
       
-      // Auto-focus channels after loading
       setTimeout(() => {
         const channelList = document.getElementById('channelList');
         if (channelList) {
@@ -1108,7 +1084,6 @@
   </script>
   
   <script>
-    // Setup search functionality
     function setupSearch() {
       const searchInput = document.getElementById('channelSearch');
       const clearButton = document.getElementById('clearSearch');
@@ -1136,14 +1111,12 @@
         switchToChannelsMode();
       });
       
-      // Add keyboard shortcut (Ctrl+F) to focus search
       document.addEventListener('keydown', function(e) {
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
           e.preventDefault();
           searchInput.focus();
         }
         
-        // Focus search with / key
         if (e.key === '/' && document.activeElement !== searchInput) {
           e.preventDefault();
           searchInput.focus();
@@ -1151,7 +1124,6 @@
       });
     }
     
-    // Filter channels based on search term
     function filterChannels(searchTerm) {
       filteredChannels = channels.filter(channel => 
         channel.name.toLowerCase().includes(searchTerm)
@@ -1169,7 +1141,6 @@
       }
     }
     
-    // Clear search and show all channels
     function clearSearch() {
       const searchResultsInfo = document.getElementById('searchResultsInfo');
       searchResultsInfo.style.display = 'none';
@@ -1179,7 +1150,6 @@
   </script>
   
   <script>
-    // Render filtered channels
     function renderFilteredChannels() {
       const channelList = document.getElementById('channelList');
       
@@ -1192,18 +1162,22 @@
       let html = '<div class="playlist-container">';
       
       filteredChannels.forEach((channel, index) => {
+        let displayName = channel.name || 'Unknown';
+        let logoUrl = channel.logo || 'https://i.postimg.cc/d1hHy4ss/11.png';
+        
         html += `
           <div class="channel-item" 
-               data-url="${channel.url}" 
-               data-logo="${channel.logo}"
+               data-url="${channel.url ? channel.url.replace(/"/g, '&quot;') : ''}" 
+               data-logo="${logoUrl.replace(/"/g, '&quot;')}"
                data-index="${index}"
                tabindex="-1">
-            <img src="${channel.logo}" 
+            <img src="${logoUrl}" 
                  onerror="this.src='https://i.postimg.cc/d1hHy4ss/11.png'; this.onerror=null;"
                  class="channel-logo"
                  loading="lazy"
-                 onload="this.classList.add('loaded')">
-            <div class="channel-name">${channel.name}</div>
+                 onload="this.classList.add('loaded')"
+                 alt="${displayName}">
+            <div class="channel-name">${displayName}</div>
           </div>
         `;
       });
@@ -1212,7 +1186,6 @@
       
       channelList.innerHTML = html;
       
-      // Add click event listeners to filtered channels
       const channelItems = document.querySelectorAll('.channel-item');
       channelItems.forEach((item, index) => {
         item.addEventListener('click', function(e) {
@@ -1222,13 +1195,14 @@
           setFocus(currentFocusIndex);
           const url = this.getAttribute('data-url');
           const logo = this.getAttribute('data-logo');
-          playChannel(url, logo);
-          triggerSwitchAd();
-          focusOnPlayer();
+          if (url && url !== 'null') {
+            playChannel(url, logo);
+            triggerSwitchAd();
+            focusOnPlayer();
+          }
         });
       });
       
-      // Update navigation items
       updateChannelItems();
       switchToChannelsMode();
       
@@ -1239,7 +1213,6 @@
   </script>
   
   <script>
-    // Load channels from multiple playlists in parallel
     async function loadChannels() {
       try {
         channels = [];
@@ -1257,7 +1230,6 @@
           { url: m3u6Url, name: "CricHd" }
         ].filter(p => p.url && p.url !== '*/');
         
-        // Load all playlists in parallel for faster loading
         const playlistPromises = playlists.map(async (playlist) => {
           try {
             const m3uChannels = await loadM3uPlaylist(playlist.url);
@@ -1286,7 +1258,6 @@
         renderChannels();
         
         if (channels.length > 0) {
-          // Preload first channel logo
           preloadLogo(channels[0].logo);
           initPlayer(channels[0].url, channels[0].logo);
         }
@@ -1296,7 +1267,6 @@
       }
     }
     
-    // Preload logo function
     function preloadLogo(url) {
       const img = new Image();
       img.src = url;
@@ -1307,101 +1277,84 @@
   </script>
   
   <script>
-    // Load M3U playlist with better parsing for multiple URLs
     async function loadM3uPlaylist(url) {
       try {
-        // Add cache buster for development, remove in production
-        const cacheBuster = '?v=' + Date.now();
-        const response = await fetch(url + cacheBuster, {
-          cache: 'force-cache' // Use cache for faster loading
+        console.log('Loading playlist:', url);
+        const response = await fetch(url, {
+          cache: 'force-cache'
         });
         const text = await response.text();
         
         const channels = [];
         const lines = text.split('\n');
         
-        let currentChannel = {};
-        let urlLines = [];
         let i = 0;
-        
         while (i < lines.length) {
           const line = lines[i].trim();
           
           if (line.startsWith('#EXTINF:')) {
-            // If we have a previous channel with URLs, process it
-            if (currentChannel.name && urlLines.length > 0) {
-              processChannelUrls(currentChannel, urlLines, channels);
-            }
+            const extinfLine = line;
             
-            // Parse new channel
-            const info = line.substring(8);
-            const nameMatch = info.match(/,(.*)/);
-            const logoMatch = info.match(/tvg-logo="([^"]*)"/);
+            const nameMatch = extinfLine.match(/,([^,]+)$/);
+            let channelName = nameMatch ? nameMatch[1].trim() : 'Unknown';
             
-            currentChannel = {
-              name: nameMatch ? nameMatch[1].trim() : 'Unknown',
-              logo: logoMatch ? logoMatch[1] : 'https://i.postimg.cc/d1hHy4ss/11.png'
-            };
-            urlLines = [];
+            const logoMatch = extinfLine.match(/tvg-logo="([^"]*)"/);
+            let logoUrl = logoMatch ? logoMatch[1] : 'https://i.postimg.cc/d1hHy4ss/11.png';
             
-          } else if (line && !line.startsWith('#')) {
-            // This is a URL line
-            urlLines.push(line);
+            channelName = channelName.replace(/["']/g, '').trim();
             
-            // Check if next line is also a URL (no #EXTINF: before it)
             let j = i + 1;
+            let urls = [];
+            
             while (j < lines.length) {
               const nextLine = lines[j].trim();
+              
               if (nextLine.startsWith('#EXTINF:')) {
                 break;
               }
+              
               if (nextLine && !nextLine.startsWith('#')) {
-                urlLines.push(nextLine);
+                urls.push(nextLine);
               }
+              
               j++;
             }
-            i = j - 1; // Skip the URLs we just processed
+            
+            if (urls.length === 1) {
+              channels.push({
+                name: channelName,
+                logo: logoUrl,
+                url: urls[0]
+              });
+              console.log('Added channel:', channelName);
+            } else if (urls.length > 1) {
+              urls.forEach((url, index) => {
+                channels.push({
+                  name: `${channelName} ${index + 1}`,
+                  logo: logoUrl,
+                  url: url
+                });
+              });
+              console.log(`Added ${urls.length} variants for:`, channelName);
+            }
+            
+            i = j;
+          } else {
+            i++;
           }
-          
-          i++;
         }
         
-        // Process last channel
-        if (currentChannel.name && urlLines.length > 0) {
-          processChannelUrls(currentChannel, urlLines, channels);
-        }
-        
+        console.log(`Total channels loaded from ${url}:`, channels.length);
         return channels;
+        
       } catch (error) {
         console.error('Error loading M3U playlist:', error);
         return [];
       }
     }
-    
-    // Helper function to process channel URLs
-    function processChannelUrls(channel, urls, channels) {
-      if (urls.length === 1) {
-        // Single URL - add as is
-        channels.push({
-          name: channel.name,
-          logo: channel.logo,
-          url: urls[0]
-        });
-      } else {
-        // Multiple URLs - add with numbers
-        urls.forEach((url, index) => {
-          channels.push({
-            name: `${channel.name} ${index + 1}`,
-            logo: channel.logo,
-            url: url
-          });
-        });
-      }
-    }
   </script>
   
   <script>
-    // Render channels to the DOM with divider and lazy loading
     function renderChannels() {
       const channelList = document.getElementById('channelList');
       
@@ -1421,18 +1374,22 @@
           }
         }
         
+        let displayName = channel.name || 'Unknown';
+        let logoUrl = channel.logo || 'https://i.postimg.cc/d1hHy4ss/11.png';
+        
         html += `
           <div class="channel-item" 
-               data-url="${channel.url}" 
-               data-logo="${channel.logo}"
+               data-url="${channel.url ? channel.url.replace(/"/g, '&quot;') : ''}" 
+               data-logo="${logoUrl.replace(/"/g, '&quot;')}"
                data-index="${index}"
                tabindex="-1">
-            <img src="${channel.logo}" 
+            <img src="${logoUrl}" 
                  onerror="this.src='https://i.postimg.cc/d1hHy4ss/11.png'; this.onerror=null;"
                  class="channel-logo"
                  loading="lazy"
-                 onload="this.classList.add('loaded')">
-            <div class="channel-name">${channel.name}</div>
+                 onload="this.classList.add('loaded')"
+                 alt="${displayName}">
+            <div class="channel-name">${displayName}</div>
           </div>
         `;
       });
@@ -1441,10 +1398,10 @@
       
       channelList.innerHTML = html;
       
-      // Preload next few channel logos for smoother scrolling
+      console.log('First 5 channels:', channels.slice(0, 5));
+      
       preloadVisibleChannelLogos();
       
-      // Add click event listeners to channels
       const channelItems = document.querySelectorAll('.channel-item');
       channelItems.forEach((item, index) => {
         item.addEventListener('click', function(e) {
@@ -1454,13 +1411,14 @@
           setFocus(currentFocusIndex);
           const url = this.getAttribute('data-url');
           const logo = this.getAttribute('data-logo');
-          playChannel(url, logo);
-          triggerSwitchAd();
-          focusOnPlayer();
+          if (url && url !== 'null') {
+            playChannel(url, logo);
+            triggerSwitchAd();
+            focusOnPlayer();
+          }
         });
       });
       
-      // Update navigation items
       updateChannelItems();
       switchToChannelsMode();
       
@@ -1469,12 +1427,10 @@
       }, 100);
     }
     
-    // Preload logos for visible channels
     function preloadVisibleChannelLogos() {
       const images = document.querySelectorAll('.channel-item img');
       const imageArray = Array.from(images);
       
-      // Load first 20 images
       imageArray.slice(0, 20).forEach(img => {
         if (!channelLogoCache.has(img.src)) {
           const preloadImg = new Image();
@@ -1485,190 +1441,165 @@
     }
   </script>
   
-<script>
-  // Initialize player with improved loading
-  function initPlayer(url, logo) {
-    // Show loading overlay
-    const loadingOverlay = document.getElementById('videoLoadingOverlay');
-    if (loadingOverlay) {
-      loadingOverlay.classList.remove('hidden');
-    }
-    
-    // Clear any existing timeout
-    if (videoLoadingTimeout) {
-      clearTimeout(videoLoadingTimeout);
-    }
-    
-    // Hide loading overlay after 3 seconds max
-    videoLoadingTimeout = setTimeout(() => {
-      if (loadingOverlay) {
-        loadingOverlay.classList.add('hidden');
-      }
-    }, 3000);
-    
-    // Inject watermark styles
-    function injectWatermarkStyles() {
-      const style = document.createElement('style');
-      style.textContent = `
-        .clappr-watermark[data-watermark] {
-          position: absolute;
-          min-width: 70px;
-          max-width: 200px;
-          width: 12%;
-          text-align: center;
-          z-index: 10;
-          left: 10% !important;
-          bottom: 13% !important;
-          top: auto !important;
-          right: auto !important;
-          transform: scale(0.7) !important;
-          transform-origin: left bottom !important;
-          
-        }
-        
-        .clappr-watermark[data-watermark] img {
-          max-width: 100%;
-          border: none;
-          box-shadow: none;
-          opacity: 0.7;
-        }
-        
-        /* Hide poster when video starts playing */
-        .clappr-poster.hide {
-          opacity: 0;
-          transition: opacity 0.5s ease;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-    
-    // Inject watermark styles
-    injectWatermarkStyles();
-    
-    // Preload poster image
-    const posterImg = new Image();
-    posterImg.src = "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif";
-    
-    player = new Clappr.Player({
-      source: url,
-      parentId: "#player",
-      autoPlay: true,
-      mute: false,
-      width: "100%",
-      height: "100%",
-      watermark: "https://i.postimg.cc/d1hHy4ss/11.png",
-      watermarkPosition: 'bottom-right',
-      watermarkOpacity: 0.1,
-      plugins: [
-        HlsjsPlayback, 
-        LevelSelector,
-        window.ClapprPipMode ? window.ClapprPipMode.PipButton : null,
-        FullscreenLogoPlugin
-      ].filter(Boolean),
-      mediacontrol: { 
-        seekbar: "red", 
-        buttons: "white" 
-      },
-      poster: "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif"
-    });
-    
-    // Store player globally
-    window.player = player;
-    
-    // Add event listener for when video starts playing
-    player.on('play', function() {
-      // Hide loading overlay
-      if (loadingOverlay) {
-        loadingOverlay.classList.add('hidden');
-      }
-      if (videoLoadingTimeout) {
-        clearTimeout(videoLoadingTimeout);
-      }
-      
-      // Hide poster
-      const posterElement = document.querySelector('.clappr-poster');
-      if (posterElement) {
-        posterElement.classList.add('hide');
-        setTimeout(() => {
-          posterElement.style.display = 'none';
-        }, 500);
-      }
-    });
-    
-    // Add event listener for buffering
-    player.on('buffering', function() {
-      if (loadingOverlay) {
-        loadingOverlay.classList.remove('hidden');
-      }
-    });
-    
-    // Add event listener for when buffer is full
-    player.on('bufferfull', function() {
-      if (loadingOverlay) {
-        loadingOverlay.classList.add('hidden');
-      }
-    });
-    
-    // Add event listener for errors
-    player.on('error', function() {
-      if (loadingOverlay) {
-        loadingOverlay.classList.add('hidden');
-      }
-    });
-    
-    // Add event listener for when player is ready
-    player.on(Clappr.Events.PLAYER_READY, function() {
-      // Apply additional watermark styles
-      setTimeout(() => {
-        const watermark = document.querySelector('.clappr-watermark[data-watermark]');
-        if (watermark) {
-          watermark.style.left = '10%';
-          watermark.style.bottom = '13%';
-          watermark.style.top = 'auto';
-          watermark.style.right = 'auto';
-          watermark.style.transform = 'scale(0.7)';
-          watermark.style.transformOrigin = 'left bottom';
-          watermark.style.minWidth = '70px';
-          watermark.style.maxWidth = '200px';
-          watermark.style.width = '12%';
-          watermark.style.textAlign = 'center';
-          watermark.style.zIndex = '10';
-        }
-        
-        // Apply styles to watermark image
-        const watermarkImg = document.querySelector('.clappr-watermark[data-watermark] img');
-        if (watermarkImg) {
-          watermarkImg.style.maxWidth = '100%';
-          watermarkImg.style.border = 'none';
-          watermarkImg.style.boxShadow = 'none';
-        }
-      }, 500);
-    });
-    
-    // Hide fullscreen logo initially
-    const logoElement = document.getElementById('fullscreen-logo');
-    if (logoElement) {
-      logoElement.style.display = 'none';
-      logoElement.style.opacity = '0';
-    }
-  }
-</script>
-  
   <script>
-    // Play a channel with smooth transition
-    function playChannel(url, logo) {
-      // Show loading overlay
+    function initPlayer(url, logo) {
       const loadingOverlay = document.getElementById('videoLoadingOverlay');
       if (loadingOverlay) {
         loadingOverlay.classList.remove('hidden');
       }
       
-      // Clear any existing timeout
       if (videoLoadingTimeout) {
         clearTimeout(videoLoadingTimeout);
       }
       
-      // Hide loading overlay after 3 seconds max
+      videoLoadingTimeout = setTimeout(() => {
+        if (loadingOverlay) {
+          loadingOverlay.classList.add('hidden');
+        }
+      }, 3000);
+      
+      function injectWatermarkStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+          .clappr-watermark[data-watermark] {
+            position: absolute;
+            min-width: 70px;
+            max-width: 200px;
+            width: 12%;
+            text-align: center;
+            z-index: 10;
+            left: 10% !important;
+            bottom: 13% !important;
+            top: auto !important;
+            right: auto !important;
+            transform: scale(0.7) !important;
+            transform-origin: left bottom !important;
+          }
+          
+          .clappr-watermark[data-watermark] img {
+            max-width: 100%;
+            border: none;
+            box-shadow: none;
+          }
+          
+          .clappr-poster.hide {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      injectWatermarkStyles();
+      
+      const posterImg = new Image();
+      posterImg.src = "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif";
+      
+      player = new Clappr.Player({
+        source: url,
+        parentId: "#player",
+        autoPlay: true,
+        mute: false,
+        width: "100%",
+        height: "100%",
+        watermark: "https://i.postimg.cc/d1hHy4ss/11.png",
+        watermarkPosition: 'bottom-right',
+        watermarkOpacity: 0.7,
+        plugins: [
+          HlsjsPlayback, 
+          LevelSelector,
+          window.ClapprPipMode ? window.ClapprPipMode.PipButton : null,
+          FullscreenLogoPlugin
+        ].filter(Boolean),
+        mediacontrol: { 
+          seekbar: "red", 
+          buttons: "white" 
+        },
+        poster: "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif"
+      });
+      
+      window.player = player;
+      
+      player.on('play', function() {
+        if (loadingOverlay) {
+          loadingOverlay.classList.add('hidden');
+        }
+        if (videoLoadingTimeout) {
+          clearTimeout(videoLoadingTimeout);
+        }
+        
+        const posterElement = document.querySelector('.clappr-poster');
+        if (posterElement) {
+          posterElement.classList.add('hide');
+          setTimeout(() => {
+            posterElement.style.display = 'none';
+          }, 500);
+        }
+      });
+      
+      player.on('buffering', function() {
+        if (loadingOverlay) {
+          loadingOverlay.classList.remove('hidden');
+        }
+      });
+      
+      player.on('bufferfull', function() {
+        if (loadingOverlay) {
+          loadingOverlay.classList.add('hidden');
+        }
+      });
+      
+      player.on('error', function() {
+        if (loadingOverlay) {
+          loadingOverlay.classList.add('hidden');
+        }
+      });
+      
+      player.on(Clappr.Events.PLAYER_READY, function() {
+        setTimeout(() => {
+          const watermark = document.querySelector('.clappr-watermark[data-watermark]');
+          if (watermark) {
+            watermark.style.left = '10%';
+            watermark.style.bottom = '13%';
+            watermark.style.top = 'auto';
+            watermark.style.right = 'auto';
+            watermark.style.transform = 'scale(0.7)';
+            watermark.style.transformOrigin = 'left bottom';
+            watermark.style.minWidth = '70px';
+            watermark.style.maxWidth = '200px';
+            watermark.style.width = '12%';
+            watermark.style.textAlign = 'center';
+            watermark.style.zIndex = '10';
+          }
+          
+          const watermarkImg = document.querySelector('.clappr-watermark[data-watermark] img');
+          if (watermarkImg) {
+            watermarkImg.style.maxWidth = '100%';
+            watermarkImg.style.border = 'none';
+            watermarkImg.style.boxShadow = 'none';
+          }
+        }, 500);
+      });
+      
+      const logoElement = document.getElementById('fullscreen-logo');
+      if (logoElement) {
+        logoElement.style.display = 'none';
+        logoElement.style.opacity = '0';
+      }
+    }
+  </script>
+  
+  <script>
+    function playChannel(url, logo) {
+      const loadingOverlay = document.getElementById('videoLoadingOverlay');
+      if (loadingOverlay) {
+        loadingOverlay.classList.remove('hidden');
+      }
+      
+      if (videoLoadingTimeout) {
+        clearTimeout(videoLoadingTimeout);
+      }
+      
       videoLoadingTimeout = setTimeout(() => {
         if (loadingOverlay) {
           loadingOverlay.classList.add('hidden');
@@ -1682,7 +1613,6 @@
           poster: "https://i.pinimg.com/originals/5a/93/4e/5a934e84f67d2a61a118ec95b1d6cb74.gif"
         });
         
-        // Ensure poster is visible
         setTimeout(() => {
           const posterElement = document.querySelector('.clappr-poster');
           if (posterElement) {
