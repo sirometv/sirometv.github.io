@@ -583,7 +583,7 @@
     
     // Playlist URLs - আপনার প্রয়োজনমত আপডেট করুন
     const m3u1Url = 'https://raw.githubusercontent.com/sirometv/playlist/main/sirometv.m3u';
-    const m3u2Url = 'https://raw.githubusercontent.com/sirometv/playlist/main/sirometvsports.m3u';
+    const m3u2Url = 'https://raw.githubusercontent.com/sirometv/playlist/main/Yupp.m3u';
     const m3u3Url = '*/';
     const m3u4Url = '*/';
     const m3u5Url = '*/';
@@ -1523,12 +1523,14 @@
           right: auto !important;
           transform: scale(0.7) !important;
           transform-origin: left bottom !important;
+          
         }
         
         .clappr-watermark[data-watermark] img {
           max-width: 100%;
           border: none;
           box-shadow: none;
+          opacity: 0.7;
         }
         
         /* Hide poster when video starts playing */
@@ -1556,7 +1558,7 @@
       height: "100%",
       watermark: "https://i.postimg.cc/d1hHy4ss/11.png",
       watermarkPosition: 'bottom-right',
-      watermarkOpacity: 0.7,
+      watermarkOpacity: 0.1,
       plugins: [
         HlsjsPlayback, 
         LevelSelector,
