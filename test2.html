@@ -205,15 +205,17 @@
       text-align: center;
       box-shadow: none;
       /*box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);*/
-      transition: all 0.2s ease;
+      transition:none ; /* all 0.2s ease; Eta channel Move korar somoy cursor change er time */
       cursor: pointer;
+      /*transform: scale(0.98);*/
+      /*animation: fadeInUp 5s ease both;*/
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100%;
-      outline: none;
-      border: 2px solid transparent;
+      outline: 2px solid black;
+      border: 1px solid black;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       
@@ -224,12 +226,12 @@
      
     }
     
-    /* Hover effect */
+    /* Hover effect এই ইফেক্ট টা মোবালের টার্স বা কার্সারের ক্ষেত্রে  */
     .channel-item:hover {
       border: 1px solid white;
       box-shadow: none;
       /*box-shadow: 0 0 2px white, 0 0 3px white;*/
-      background: red;
+      background: black;
     }
     
     /* Focus state for TV remote navigation */
@@ -239,7 +241,8 @@
     
     .channel-item.channel-selected {
       border: 1px solid white;
-      box-shadow: 0 0 2px white, 0 0 6px white;
+      /*outline: none;*/
+      box-shadow: 0 0 3px white, 0 0 6px white;
       background: black;
     }
     
@@ -252,23 +255,20 @@
       pointer-events: none;
       user-select: none;
       -webkit-user-drag: none;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      flex-shrink: 0;
+      /*opacity: 0; transition: opacity 0.2s ease; flex-shrink: 0;*/
     }
     
-    .channel-item img.loaded {
-      opacity: 1;
-    }
+    /*.channel-item img.loaded { opacity: 1; }*/
     
     /* Channel name styles - fixed height with ellipsis */
     .channel-name {
       margin: 0;
       font-size: 10px !important;
       line-height: 1.2;
-      max-height: 2.4em;
+      /*max-height: 2.4em;*/
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -363,18 +363,19 @@
       margin: 1px 0;
     }
     
-    /* Playlist container - fixed grid */
+    /* Playlist container and divider - fixed grid */
     .playlist-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+      gap: 20px; /* এখানে 10px দিলে PC তে এক লাইনে 4 টি করে চ্যানেল শো করবে। */
       min-height: 100%;
     }
     
+    /* এটা প্রতিটা প্লেলিস্টের মাঝখানে যে লম্বা দাড়ি আছে সেটা, */
     .playlist-divider {
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #ff4444, transparent);
-      margin: 4px 0;
+      height: 20px; 
+      background: linear-gradient(90deg, transparent, #555, transparent);
+      margin: 15px;
       width: 100%;
       grid-column: 1 / -1;
     }
@@ -383,6 +384,7 @@
   <style>
     /* Desktop Only */
     @media (min-width: 1024px) {
+    /* Desktop-এ hover ইফেক্ট ভালোভাবে দেখানোর জন্য */
       .channel-item:hover {
         border: 1px solid white;
         box-shadow: 0 0 2px white, 0 0 6px white;
