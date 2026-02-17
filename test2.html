@@ -154,7 +154,6 @@
       margin-left: 2%;
       margin-right: 2%;
       font-size: 10px;
-      padding: None;
     }
     
     .search-box {
@@ -199,15 +198,15 @@
     }
     
     /* Channel item styles - FIXED DIMENSIONS FOR ALL CHANNELS */
+    /* Channel item styles with focus state for TV remote navigation */
     .channel-item {
       background: #333;
       border-radius: 5px;
       text-align: center;
-      box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
+      box-shadow: none;
+      /*box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);*/
       transition: all 0.2s ease;
       cursor: pointer;
-      transform: scale(0.98);
-      animation: fadeInUp 5s ease both;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -228,7 +227,8 @@
     /* Hover effect */
     .channel-item:hover {
       border: 1px solid white;
-      box-shadow: 0 0 2px white, 0 0 3px white;
+      box-shadow: none;
+      /*box-shadow: 0 0 2px white, 0 0 3px white;*/
       background: red;
     }
     
@@ -246,19 +246,22 @@
     /* Logo styles - fixed size */
     .channel-item img {
       width: 100%;
-      height: 70px;
+      height: auto;
       object-fit: contain;
-      margin-bottom: 2px;
+      margin-bottom: 5px;
       pointer-events: none;
       user-select: none;
       -webkit-user-drag: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      flex-shrink: 0;
     }
     
-    /*.channel-item img.loaded {*/
-    /* opacity: 1; }*/
+    .channel-item img.loaded {
+      opacity: 1;
+    }
     
-    
-    /* Channel name styles - fixed height with ellipsis- এখানে তেমন  কিছুই পরিবর্তন করিনি  */
+    /* Channel name styles - fixed height with ellipsis */
     .channel-name {
       margin: 0;
       font-size: 10px !important;
@@ -266,7 +269,6 @@
       max-height: 2.4em;
       overflow: hidden;
       text-overflow: ellipsis;
-      /* white-space: nowrap; এটা এনেছি ১৬-০১-২৬ তারিখের এটা থেকে  */
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -275,7 +277,7 @@
       text-align: center;
       color: #fff;
       user-select: none;
-      padding: 0 20px;
+      padding: 0 2px;
     }
     
     .channel-item small {
@@ -355,26 +357,24 @@
       margin-left: 2%;
       margin-right: 2%;
       font-size: 10px;
-      padding: None;
     }
     
     #counters div {
       margin: 1px 0;
     }
     
-    /* Playlist container and divider  - fixed grid */
+    /* Playlist container - fixed grid */
     .playlist-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
       min-height: 100%;
     }
     
-    /* এটা প্রতিটা প্লেলিস্টের মাঝখানে যে লম্বা দাড়ি আছে সেটা, */
     .playlist-divider {
-      height: 20px; 
-      background: linear-gradient(90deg, transparent, #555, transparent);
-      margin: 15px 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ff4444, transparent);
+      margin: 4px 0;
       width: 100%;
       grid-column: 1 / -1;
     }
@@ -383,15 +383,13 @@
   <style>
     /* Desktop Only */
     @media (min-width: 1024px) {
-    /* Desktop-এ hover ইফেক্ট ভালোভাবে দেখানোর জন্য */
       .channel-item:hover {
         border: 1px solid white;
         box-shadow: 0 0 2px white, 0 0 6px white;
         background: red;
-        transform: translateY(-8px) scale(1.03);
+        transform: translateY(-4px) scale(1.02);
       }
       
-      /* Desktop-এ স্ক্রলবার স্টাইলিং */
       .channel-list::-webkit-scrollbar {
         width: 12px;
       }
@@ -403,11 +401,7 @@
       #fullscreen-logo {
         width: 60px;
       }
-    }
-  </style> 
       
-      
-  <style>     
       .playlist-container {
         grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* এটার মধ্যে 110px এর বদল শুধু মাত্র 4 দিলে বা 80px দিলে পিসিতে ৩ টি করে চ্যানেল শো করবে */
       }
@@ -435,18 +429,19 @@
       
       .playlist-container {
         grid-template-columns: repeat(4, 1fr);
-        gap: 0.5rem;
-        padding: 0.5rem;
+        gap: 4px;
+        padding: 4px;
       }
       
       .channel-item {
-        padding: 2%;
+      width:100%;
+        height: auto;
+        padding: 4px 2px;
       }
       
       .channel-item img {
         width: 100%;
-        height: 70px;
-        object-fit: contain;
+        height: auto;
       }
       
       .channel-name {
@@ -493,7 +488,6 @@
   </style>
   
   <style>
-    /* Mobile Portrait Mode */
     @media (max-width: 768px) and (orientation: portrait) {
       .video-container {
         flex: 0 0 40%;
@@ -506,7 +500,6 @@
   </style>
   
   <style>
-    /* Mobile Landscape Mode */
     @media (max-width: 768px) and (orientation: landscape) {
       .video-container {
         flex: 0 0 50%;
@@ -519,20 +512,21 @@
   </style>
   
   <style>
-    /* Small Mobile Devices */
     @media (max-width: 480px) {
       .playlist-container {
         grid-template-columns: repeat(4, 1fr);
-        gap: 0.3rem; /* মোবাইলের চ্যানেলের গেইফ */
-        padding: 0.3rem;
+        gap: 8px; /* মোবাইলের চ্যানেলের গেইফ */
+        padding: 3px;
       }
       
       .channel-item { /* এটি মোবাইলের লগোর সাইজ */
-        padding: 3%;
+        width:100%;
+        height: auto;
+        padding: 1px 1px;
       }
       
       .channel-item img {
-        width: 100%;
+        width: 100px;
         height: 70px;
       }
       
