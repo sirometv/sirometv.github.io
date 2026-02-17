@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>  
@@ -199,7 +198,7 @@
       padding: 5px;
     }
     
-    /* Channel item styles with focus state for TV remote navigation */
+    /* Channel item styles - FIXED DIMENSIONS FOR ALL CHANNELS */
     .channel-item {
       background: #333;
       border-radius: 5px;
@@ -218,8 +217,15 @@
       border: 2px solid transparent;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      
+      /* Fixed dimensions for all channel items */
+     /* width: 100%;*/*/
+     /* height: auto;*/
+     /* padding: none; */
+     
     }
     
+    /* Hover effect */
     .channel-item:hover {
       border: 1px solid white;
       box-shadow: 0 0 2px white, 0 0 3px white;
@@ -237,6 +243,7 @@
       background: black;
     }
     
+    /* Logo styles - fixed size */
     .channel-item img {
       width: 100%;
       height: 70px;
@@ -247,16 +254,28 @@
       -webkit-user-drag: none;
     }
     
+    /*.channel-item img.loaded {*/
+    /* opacity: 1; }*/
+    
+    
+    /* Channel name styles - fixed height with ellipsis- এখানে তেমন  কিছুই পরিবর্তন করিনি  */
     .channel-name {
       margin: 0;
       font-size: 10px !important;
+      line-height: 1.2;
+      max-height: 2.4em;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
+      /* white-space: nowrap; এটা এনেছি ১৬-০১-২৬ তারিখের এটা থেকে  */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      word-break: break-word;
       width: 100%;
       text-align: center;
       color: #fff;
       user-select: none;
+      padding: 0 20px;
     }
     
     .channel-item small {
@@ -306,6 +325,26 @@
       color: #aaa;
     }
     
+    /* Video loading overlay */
+    .video-loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      transition: opacity 0.3s ease;
+    }
+    
+    .video-loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
     /* Firebase Counter Styles */
     #counters {
       text-align: center;
@@ -323,7 +362,7 @@
       margin: 1px 0;
     }
     
-    /* Playlist container and divider */
+    /* Playlist container and divider  - fixed grid */
     .playlist-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
@@ -331,10 +370,11 @@
       min-height: 100%;
     }
     
+    /* এটা প্রতিটা প্লেলিস্টের মাঝখানে যে লম্বা দাড়ি আছে সেটা, */
     .playlist-divider {
-      height: 8px;
+      height: 20px; 
       background: linear-gradient(90deg, transparent, #555, transparent);
-      margin: 0.5rem 0;
+      margin: 15px 0;
       width: 100%;
       grid-column: 1 / -1;
     }
@@ -343,7 +383,7 @@
   <style>
     /* Desktop Only */
     @media (min-width: 1024px) {
-      /* Desktop-এ hover ইফেক্ট ভালোভাবে দেখানোর জন্য */
+    /* Desktop-এ hover ইফেক্ট ভালোভাবে দেখানোর জন্য */
       .channel-item:hover {
         border: 1px solid white;
         box-shadow: 0 0 2px white, 0 0 6px white;
@@ -356,14 +396,20 @@
         width: 12px;
       }
       
-      /* Desktop-এ প্লেয়ারের সাইজ */
       #player {
         max-width: 1280px;
       }
       
-      /* Desktop-এ লোগো সাইজ */
       #fullscreen-logo {
         width: 60px;
+      }
+    }
+  </style> 
+      
+      
+  <style>     
+      .playlist-container {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* এটার মধ্যে 110px এর বদল শুধু মাত্র 4 দিলে বা 80px দিলে পিসিতে ৩ টি করে চ্যানেল শো করবে */
       }
     }
   </style>
@@ -405,6 +451,7 @@
       
       .channel-name {
         font-size: 8px !important;
+        -webkit-line-clamp: 2;
       }
       
       #player {
@@ -476,21 +523,21 @@
     @media (max-width: 480px) {
       .playlist-container {
         grid-template-columns: repeat(4, 1fr);
-        gap: 0.3rem;
+        gap: 0.3rem; /* মোবাইলের চ্যানেলের গেইফ */
         padding: 0.3rem;
       }
       
-      .channel-item {
+      .channel-item { /* এটি মোবাইলের লগোর সাইজ */
         padding: 3%;
-      }
-      
-      .channel-name {
-        font-size: 7px !important;
       }
       
       .channel-item img {
         width: 100%;
         height: 70px;
+      }
+      
+      .channel-name {
+        font-size: 10px !important;
       }
     }
   </style>
@@ -502,7 +549,10 @@
     <div class="video-container">
       <div class="video-wrapper">
         <div id="player" tabindex="-1"></div>
-        
+        <!-- Loading overlay for video -->
+        <div class="video-loading-overlay" id="videoLoadingOverlay">
+          <div class="loader"></div>
+        </div>
         <!-- Fullscreen Logo -->
         <img id="fullscreen-logo" src="https://i.postimg.cc/d1hHy4ss/11.png" alt="Sirome TV Logo">
       </div>
