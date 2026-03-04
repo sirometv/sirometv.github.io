@@ -653,11 +653,11 @@
     let lastNormalModeTime = 0;
     let focusDebounceTimer = null;
     
-    // Keyboard repeat handling
-    let repeatInterval = null;
+    // Keyboard press and hold variables
+    let isMoving = false;
     let activeKey = null;
-    let repeatDelay = 300; // Initial delay before repeating
-    let repeatSpeed = 100; // Speed of repeating
+    let moveInterval = null;
+    let moveSpeed = 150; // Movement speed when holding key
     
     // Playlist selector variables
     let currentPlaylistIndex = 0;
@@ -753,7 +753,7 @@
   
   <script>
     // ================================
-    // PLAYLIST SELECTOR FUNCTIONS
+    // UPDATED PLAYLIST SELECTOR FUNCTIONS
     // ================================
     
     function setupPlaylistSelector() {
@@ -773,7 +773,7 @@
       let buttonsHtml = '';
       playlists.forEach((playlist, index) => {
         const activeClass = index === 0 ? 'active' : '';
-        buttonsHtml += `<button class="playlist-btn ${activeClass}" data-playlist-url="${playlist.url}" data-playlist-name="${playlist.name}" data-index="${index}" tabindex="${index === 0 ? '0' : '-1'}">${playlist.displayName}</button>`;
+        buttonsHtml += `<button class="playlist-btn ${activeClass}" data-playlist-url="${playlist.url}" data-playlist-name="${playlist.name}" data-display-name="${playlist.displayName}" data-index="${index}" tabindex="${index === 0 ? '0' : '-1'}">${playlist.displayName}</button>`;
       });
       
       playlistSelector.innerHTML = buttonsHtml;
@@ -781,10 +781,12 @@
       playlistButtons = document.querySelectorAll('.playlist-btn');
       
       playlistButtons.forEach(btn => {
+        // Click event for mouse
         btn.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
           
+          // Update active states
           playlistButtons.forEach(b => {
             b.classList.remove('active', 'playlist-selected');
             b.setAttribute('tabindex', '-1');
@@ -794,11 +796,36 @@
           this.setAttribute('tabindex', '0');
           
           const playlistUrl = this.getAttribute('data-playlist-url');
-          const playlistName = this.getAttribute('data-playlist-name');
+          const playlistName = this.getAttribute('data-display-name');
           
+          // Load the playlist
           loadSinglePlaylist(playlistUrl, playlistName);
           
+          // Update focus indices
           playlistFocusIndex = parseInt(this.getAttribute('data-index'));
+          currentFocusIndex = 0; // Reset channel focus to first channel
+          
+          // Switch back to channels mode
+          currentMode = 'channels';
+        });
+        
+        // Keyboard Enter handler
+        btn.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Trigger click programmatically
+            this.click();
+            
+            // After loading, ensure focus moves to channels
+            setTimeout(() => {
+              currentMode = 'channels';
+              if (channelItems.length > 0) {
+                setFocus(0);
+              }
+            }, 500);
+          }
         });
       });
       
@@ -830,10 +857,27 @@
           // Render channels with names and logos together
           renderChannelsWithLoader();
           
+          // Reset search if active
+          const searchInput = document.getElementById('channelSearch');
+          if (searchInput.value) {
+            searchInput.value = '';
+            isSearchActive = false;
+            document.getElementById('clearSearch').style.display = 'none';
+            document.getElementById('searchResultsInfo').style.display = 'none';
+          }
+          
           if (channels.length > 0 && !playerInitialized) {
             initPlayer(channels[0].url, channels[0].logo);
             playerInitialized = true;
           }
+          
+          // Force focus back to channels after a short delay
+          setTimeout(() => {
+            currentMode = 'channels';
+            currentFocusIndex = 0;
+            updateChannelItems();
+            setFocus(0);
+          }, 300);
         } else {
           document.getElementById('channelList').innerHTML = '<div class="loading-text">No channels found in this playlist</div>';
         }
@@ -843,7 +887,7 @@
       }
     }
     
-    // New function to render channels with loader until images load
+    // Function to render channels with loader
     function renderChannelsWithLoader() {
       const channelList = document.getElementById('channelList');
       
@@ -889,6 +933,7 @@
         
         channelList.innerHTML = html;
         
+        // Update channel items
         channelItems = document.querySelectorAll('.channel-item');
         channelItems.forEach((item, index) => {
           item.addEventListener('click', function(e) {
@@ -906,8 +951,12 @@
         });
         
         updateChannelItems();
-        focusOnChannels();
         
+        // Set focus to first channel
+        currentFocusIndex = 0;
+        setFocus(0);
+        
+        // Scroll to top
         setTimeout(() => {
           channelList.scrollTop = 0;
         }, 100);
@@ -1145,7 +1194,10 @@
       return Math.max(columns, 3);
     }
     
-    // Handle TV Remote and Keyboard Navigation with Repeat
+    // ================================
+    // PRESS AND HOLD NAVIGATION FUNCTIONS
+    // ================================
+    
     function handleKeyDown(event) {
       const key = event.key;
       const searchInput = document.getElementById('channelSearch');
@@ -1201,7 +1253,8 @@
             if (filteredChannels.length > 0) {
               currentMode = 'channels';
               focusOnChannels();
-              startRepeatNavigation(key);
+              // Start moving immediately
+              startMoving(key);
             }
           } else if (key === 'Enter') {
             if (filteredChannels.length > 0) {
@@ -1231,11 +1284,24 @@
         navigateToPreviousChannel();
       }
       
-      // Handle arrow navigation with repeat
+      // Handle arrow navigation - PRESS AND HOLD to move continuously
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-        startRepeatNavigation(key);
+        // If not already moving with this key, start moving
+        if (!isMoving || activeKey !== key) {
+          stopMoving(); // Stop any previous movement
+          startMoving(key);
+        }
       } else if (key === 'Enter' || key === ' ') {
-        handleEnterPress();
+        // Special handling for Enter in playlist mode
+        if (currentMode === 'playlist' && playlistButtons.length > 0) {
+          // Trigger the selected playlist button
+          const selectedBtn = playlistButtons[playlistFocusIndex];
+          if (selectedBtn) {
+            selectedBtn.click();
+          }
+        } else {
+          handleEnterPress();
+        }
       } else if (key === 'Escape') {
         if (isInFullscreen) {
           exitFullscreenMode();
@@ -1256,6 +1322,60 @@
         }
       }
     }
+    
+    function startMoving(key) {
+      // First movement immediately
+      handleNavigationKey(key);
+      
+      // Then set interval for continuous movement while key is pressed
+      isMoving = true;
+      activeKey = key;
+      
+      if (moveInterval) {
+        clearInterval(moveInterval);
+      }
+      
+      moveInterval = setInterval(() => {
+        if (isMoving && activeKey === key) {
+          handleNavigationKey(key);
+        }
+      }, moveSpeed);
+    }
+    
+    function stopMoving() {
+      if (moveInterval) {
+        clearInterval(moveInterval);
+        moveInterval = null;
+      }
+      isMoving = false;
+      activeKey = null;
+    }
+    
+    function handleKeyUp(event) {
+      const key = event.key;
+      
+      // Stop moving when any arrow key is released
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+        stopMoving();
+      }
+      
+      // Also handle if it's the same key that was being pressed
+      if (activeKey === key) {
+        stopMoving();
+      }
+    }
+    
+    // Make sure to also stop moving when window loses focus
+    window.addEventListener('blur', function() {
+      stopMoving();
+    });
+    
+    // Handle visibility change
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        stopMoving();
+      }
+    });
     
     function handleRewind() {
       const now = Date.now();
@@ -1315,33 +1435,6 @@
       selectChannel();
     }
     
-    function startRepeatNavigation(key) {
-      if (repeatInterval) clearInterval(repeatInterval);
-      activeKey = key;
-      
-      // First press
-      handleNavigationKey(key);
-      
-      // Set up repeat after delay
-      setTimeout(() => {
-        if (activeKey === key) {
-          repeatInterval = setInterval(() => {
-            if (activeKey === key) {
-              handleNavigationKey(key);
-            }
-          }, repeatSpeed);
-        }
-      }, repeatDelay);
-    }
-    
-    function stopRepeatNavigation() {
-      if (repeatInterval) {
-        clearInterval(repeatInterval);
-        repeatInterval = null;
-        activeKey = null;
-      }
-    }
-    
     function handleNavigationKey(key) {
       lastKeyPressTime = Date.now();
       
@@ -1358,13 +1451,6 @@
         case 'ArrowRight':
           navigateRight();
           break;
-      }
-    }
-    
-    function handleKeyUp(event) {
-      const key = event.key;
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-        stopRepeatNavigation();
       }
     }
     
